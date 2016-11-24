@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const serverConfig = require('../config');
+const serverConfig = require('../server/config');
 
 const config = require('./webpack.base.config')({
   plugins: [

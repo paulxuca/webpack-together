@@ -1,7 +1,6 @@
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
-
 module.exports = (config) => ({
   entry: [
     ...config.entry,
