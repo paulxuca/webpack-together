@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = (config) => ({
   entry: [
+    'babel-polyfill',
     ...config.entry,
     path.resolve(process.cwd(), 'app', 'index.js'),
   ],
@@ -22,8 +23,12 @@ module.exports = (config) => ({
       exclude: /node_modules/,
       loader: 'babel-loader',
       query: {
+        plugins: ['transform-async-to-generator', 'transform-decorators-legacy'],
         presets: ['es2015', 'stage-0', 'react'],
       }
+    }, {
+      test: /\.css$/,
+      loaders: ['style-loader', 'css-loader'],
     }]
   },
   output: {

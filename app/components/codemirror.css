@@ -1,0 +1,56 @@
+.cm-s-webpacktogether.CodeMirror {
+  height: 100%;
+  font-weight: 500;
+  font-family: Monaco;
+  font-size: 14px;
+  background: #2B303B;
+  color: #BEC0BB;
+}
+
+.cm-s-webpacktogether .CodeMirror-gutters {
+  border-right: 0px;
+  background: #232830;
+}
+
+.CodeMirror-gutter-wrapper {
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.cm-s-webpacktogether div.CodeMirror-selected {
+    background: rgba(255,255,255,0.1) !important;
+}
+
+.cm-s-webpacktogether.CodeMirror pre {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.cm-s-webpacktogether .CodeMirror-cursor {
+    border-left: 1px solid #FFF !important;
+}
+
+.cm-s-webpacktogether span.cm-comment {
+    color: rgba(255,255,255,0.5);
+}
+
+.cm-s-webpacktogether span.cm-keyword {
+  color: #886D82;
+}
+
+.cm-s-webpacktogether span.cm-def {
+  color: #DAC58A;
+}
+
+.cm-s-webpacktogether span.cm-string {
+  color: #849773;
+}
+
+.cm-s-webpacktogether span.cm-variable {
+  color: #708A9F;
+}
+
+.cm-s-webpacktogether span.cm-property {
+  color: #BE616A;
+}
