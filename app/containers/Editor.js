@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import FileSelector from '../components/FileSelector';
 import EditorComponent from '../components/EditorComponent';
 import Preview from '../components/Preview';
+import CreateFileModal from '../components/CreateFileModal';
 
 
 const EditorMain = styled.default.div`
@@ -11,6 +12,7 @@ const EditorMain = styled.default.div`
   height: 100vh;
   width: 100vw;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const EditorWindow = styled.default.div`
@@ -22,11 +24,27 @@ const EditorWindow = styled.default.div`
 @inject('store') @observer
 export default class Editor extends Component {
   render() {
-    const { files, currentFileIndex, writeToFirebase } = this.props.store.app;
+    const {
+      files,
+      currentFileIndex,
+      writeToFirebase,
+      newFiletoFirebase,
+    } = this.props.store.app;
+
+    const { 
+      addFileModalOpen,
+      closeModal,
+      openModal,
+    } = this.props.store.editor;
 
     return (
       <EditorMain>
         <FileSelector />
+        <CreateFileModal
+          openModal={addFileModalOpen}
+          closeModalFn={closeModal}
+          newFileFn={newFiletoFirebase}
+        />
         { files && <EditorWindow>
           <EditorComponent
             files={files}

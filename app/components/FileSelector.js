@@ -7,7 +7,7 @@ const FileSelectorBar = styled.default.div`
   max-height: 40px;
   min-height: 40px;
   height: 40px;
-  background: #232830;
+  background: #DFE1E8;
   position: relative;
   font-size: 14px;
   font-family: Avenir, sans-serif;
@@ -20,19 +20,40 @@ const FileSelectorList = styled.default.ul`
   padding: 0;
   height: 100%;
   display: flex;
-  margin-left: 29px;
   align-items: center;
 `;
 
 const FileSelectorItem = styled.default.li`
   padding: 20px;
   min-width: 100px;
-  background-color: ${props => props.isSelected ? '#2B303B' : '#232830'};
-  color: ${props => props.isSelected ? 'white' : 'rgba(255, 255, 255, 0.5)'};
+  background-color: ${props => props.isSelected ? '#EFF1F5' : '#DFE1E8'};
+  color: ${props => props.isSelected ? '#3E444D' : '#6C7E8C'};
   display: inline;
   text-align: center;
+  cursor: default;
   &:hover {
-    color: white;
+    color: #3E444D;
+  }
+`;
+
+const NewFileSection = styled.default.div`
+  width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const NewFileButton = styled.default.button`
+  flex: 1;
+  font-family: Avenir;
+  padding-bottom: 0px;
+  color: rgba(0, 0, 0, 0.8);
+  &:focus {
+    outline: 0;
+  }
+  &:hover {
+    color: black;
+    transition: 0.25s ease;  
   }
 `;
 
@@ -40,9 +61,14 @@ const FileSelectorItem = styled.default.li`
 export default class FileSelector extends Component {
   render() {
     const { files, fileState, changeSelectedFileIndex, currentFileIndex, filesChanged } = this.props.store.app;
+    const { openModal } = this.props.store.editor;
+
     return (
       <FileSelectorBar>
         <FileSelectorList>
+          <NewFileSection>
+            <NewFileButton onClick={() => openModal()}>New File</NewFileButton>
+          </NewFileSection>
           {files && files.map((each, index) =>
             <FileSelectorItem
               key={`file_${index}`}

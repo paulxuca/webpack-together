@@ -7,6 +7,7 @@ import CodeMirror from 'codemirror';
 import { observer, inject } from 'mobx-react';
 import { getMode, setMode } from '../utils/editor';
 
+
 const EditorComponentPane = styled.default.div`
   flex: 1;
   position: relative;
@@ -46,6 +47,12 @@ export default class EditorComponent extends Component {
       indentUnit: 2,
       lineNumbers: true,
       value: files[fileIndex].content,
+      matchTags: {
+        bothTags: true,
+      },
+      autoCloseTags: true,
+      mode: getMode(files[fileIndex].name),
+      lint: false,
       theme: 'webpacktogether',
       scroll: false,
     });

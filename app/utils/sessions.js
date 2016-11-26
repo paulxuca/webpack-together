@@ -9,7 +9,8 @@ export const getSession = () => {
       resolve(cookie.get('sessionName'));
     } else {
       const sessionData = await axios.get('/api/session');
-      cookie.set('sessionName', sessionData.data);
+      // Cookie expires in one day, length of active session runnning
+      cookie.set('sessionName', sessionData.data, { expires: 1 / 24 });
       resolve(sessionData.data);
     }
   });

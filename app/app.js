@@ -1,3 +1,5 @@
+import 'sanitize.css/sanitize.css';
+
 import React, { Component, PropTypes } from 'react';
 import { observer } from 'mobx-react';
 import { Provider } from 'mobx-react';

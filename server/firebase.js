@@ -9,20 +9,20 @@ const database = firebase.database();
 const createSession = () => new Promise((resolve, reject) => {
   const sessionName = uuid();
   const firebaseRef = firebase.database().ref(`sessions/${sessionName}`);
-  firebaseRef.set({
-    lastEdited: Date.now(),
-    files: {
-      0: {
-        name: 'app.js',
-        isEntry: true,
-        content: '// Write your application code here!',
-      },
-      1: {
-        name: 'index.html',
-        isEntry: false,
-        content:`<html>\n</html>`
-      }
-    },
+  firebaseRef.set({ lastEdited: Date.now() });
+  firebaseRef.child('files')
+  .push()
+  .set({
+    name: 'app.js',
+    isEntry: true,
+    content: '// Write your application code here!',
+  });
+  firebaseRef.child('files')
+  .push()
+  .set({
+    name: 'index.html',
+    isEntry: false,
+    content:`<html>\n</html>`
   });
   const session = sessions.addSession(sessionName, firebaseRef);
   resolve(sessionName);

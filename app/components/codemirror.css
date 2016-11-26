@@ -2,14 +2,14 @@
   height: 100%;
   font-weight: 500;
   font-family: Monaco;
-  font-size: 14px;
-  background: #2B303B;
+  font-size: 13px;
+  background: #EFF1F5;
   color: #BEC0BB;
 }
 
 .cm-s-webpacktogether .CodeMirror-gutters {
   border-right: 0px;
-  background: #232830;
+  background: #EFF1F5;
 }
 
 .CodeMirror-gutter-wrapper {
@@ -19,7 +19,7 @@
 }
 
 .cm-s-webpacktogether div.CodeMirror-selected {
-    background: rgba(255,255,255,0.1) !important;
+    background: #dfe1e8 !important;
 }
 
 .cm-s-webpacktogether.CodeMirror pre {
@@ -28,15 +28,15 @@
 }
 
 .cm-s-webpacktogether .CodeMirror-cursor {
-    border-left: 1px solid #FFF !important;
+    border-left: 1px solid #4f5b66 !important;
 }
 
 .cm-s-webpacktogether span.cm-comment {
-    color: rgba(255,255,255,0.5);
+    color: #a7adba;
 }
 
 .cm-s-webpacktogether span.cm-keyword {
-  color: #886D82;
+  color: #96b5b4;
 }
 
 .cm-s-webpacktogether span.cm-def {
@@ -44,13 +44,25 @@
 }
 
 .cm-s-webpacktogether span.cm-string {
-  color: #849773;
+  color: #a3be8c;
 }
 
 .cm-s-webpacktogether span.cm-variable {
-  color: #708A9F;
+  color: #bf616a;
 }
 
 .cm-s-webpacktogether span.cm-property {
   color: #BE616A;
+}
+
+.cm-s-webpacktogether span.cm-tag {
+  color: #bf616a;
+}
+
+.cm-s-webpacktogether span.cm-bracket {
+  color: #4f5b66;
+}
+
+.cm-s-webpacktogether span.cm-attribute {
+  color: #d08770;
 }
