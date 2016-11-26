@@ -17,8 +17,6 @@ export const setMode = (mode, cmInstance) => require.ensure([], () => {
   console.log(`setting mode ${mode}`);
   if (mode === 'htmlmixed') {
     require('codemirror/mode/htmlmixed/htmlmixed.js');
-    require('codemirror/addon/edit/matchtags.js');
-    require('codemirror/addon/edit/closetag.js');
   } else if (mode === 'jsx') {
     require('codemirror/mode/jsx/jsx.js');
   } else if (mode === 'text/typescript') {
