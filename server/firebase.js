@@ -5,30 +5,65 @@ const firebaseConfig = require('./config').firebase;
 firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
+const getSessionRef = sessionName => database.ref(`sessions/${sessionName}`);
 
-const createSession = () => new Promise((resolve, reject) => {
+const createSession = () => new Promise((resolve) => {
   const sessionName = uuid();
-  const firebaseRef = firebase.database().ref(`sessions/${sessionName}`);
-  firebaseRef.set({ lastEdited: Date.now() });
+  const firebaseRef = getSessionRef(sessionName);
+  firebaseRef.set({
+    lastEdited: Date.now(),
+    entryFile: 'app.js',
+  });
   firebaseRef.child('files')
   .push()
   .set({
     name: 'app.js',
-    isEntry: true,
+    isEdited: false,
     content: '// Write your application code here!',
   });
   firebaseRef.child('files')
   .push()
   .set({
     name: 'index.html',
-    isEntry: false,
+    isEdited: false,
     content:`<html>\n</html>`
   });
-  const session = sessions.addSession(sessionName, firebaseRef);
+  sessions.addSession(sessionName, firebaseRef);
   resolve(sessionName);
 });
+
+const createFile = (fileName, isEntry, sessionName) => new Promise(async (resolve) => {
+  const firebaseRef = getSessionRef(sessionName);
+  if (isEntry) {
+    firebaseRef.update({
+      entryFile: fileName,
+    });
+  }
+  firebaseRef.child('files').push()
+  .set({
+    name: fileName,
+    content: '',
+  });
+  resolve();
+});
+
+const saveAll = sessionName => {
+  return new Promise(async (resolve) => {
+    const firebaseRef = getSessionRef(sessionName).child('files');
+    const filesList = await firebaseRef.once('value');
+    filesList.forEach((childFile) => {
+      firebaseRef.child(childFile.key).update({
+        isEdited: false,
+      });
+    });
+    resolve();
+  });
+};
+
 module.exports = {
   createSession,
+  saveAll,
+  createFile,
 };
 
 

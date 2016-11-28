@@ -5,6 +5,9 @@
   font-size: 13px;
   background: #EFF1F5;
   color: #BEC0BB;
+  overflow-y: auto;
+  overflow-x: scroll;
+  width: 50vw;
 }
 
 .cm-s-webpacktogether .CodeMirror-gutters {

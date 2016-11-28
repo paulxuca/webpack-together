@@ -1,10 +1,13 @@
 import { observable, action } from 'mobx';
-import { getSession } from '../utils/sessions';
+import {
+  getSession,
+  saveAllAndAttemptCompiler,
+  createNewFile,
+} from '../utils/sessions';
 import {
   getRefByName,
   updateToFirebase,
   updateSessionData,
-  createNewFile,
 } from '../utils/firebase';
 
 class App {
@@ -13,6 +16,7 @@ class App {
   @observable files;
   @observable currentFileIndex = 0;
   @observable filesKey = [];
+  @observable entryFileName;
 
   @action getSession = async() => {
     this.sessionName = await getSession();
@@ -24,6 +28,7 @@ class App {
 
   @action sessionListener = (snapshot) => {
     const currentValue = snapshot.val();
+    this.entryFileName = currentValue.entryFile;
     this.files = Object.keys(currentValue.files).map((key) => {
       if (this.filesKey.indexOf(key) === -1) {
         this.filesKey.push(key);
@@ -33,13 +38,17 @@ class App {
   }
 
   @action writeToFirebase = (fileIndex, value) => {
-    updateSessionData(this.sessionName);
-    updateToFirebase(this.sessionName, this.filesKey[fileIndex], value);
+    updateSessionData(this.firebaseRef);
+    updateToFirebase(this.firebaseRef, this.filesKey[fileIndex], value);
   }
 
   @action newFiletoFirebase = (fileName, isEntry) => {
-    updateSessionData(this.sessionName);
+    updateSessionData(this.firebaseRef);
     createNewFile(this.sessionName, fileName, isEntry);
+  }
+
+  @action saveFirebase = () => {
+    saveAllAndAttemptCompiler(this.sessionName);
   }
 }
 

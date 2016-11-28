@@ -3,12 +3,14 @@ import 'firebase/database';
 
 export const initializeFirebase = (config) => firebase.initializeApp(config);
 export const getRefByName = (name) => firebase.database().ref(`sessions/${name}`);
-export const updateToFirebase = (name, fileIndex, fileValue) =>
-  firebase.database().ref(`sessions/${name}/files/${fileIndex}`).update({ content: fileValue });
+export const updateToFirebase = (firebaseRef, fileIndex, fileValue) => {
+  firebaseRef
+    .child('files')
+    .child(fileIndex)
+    .update({
+      content: fileValue,
+      isEdited: true,
+    });
+};
 
-export const updateSessionData = name => firebase.database().ref(`sessions/${name}`).update({ lastEdited: Date.now() });
-export const createNewFile = (name, fileName, isEntry) => firebase.database().ref(`sessions/${name}`).child('files').push().set({
-  name: fileName,
-  isEntry: isEntry,
-  content: '',
-});
+export const updateSessionData = firebaseRef => firebaseRef.update({ lastEdited: Date.now() });

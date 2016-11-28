@@ -1,5 +1,5 @@
-import axios from 'axios';
 import cookie from 'js-cookie';
+import { getRequest, postRequest } from './request';
 
 export const getSession = () => {
   return new Promise(async(resolve, reject) => {
@@ -8,10 +8,32 @@ export const getSession = () => {
       console.log(`Existing session ${existingCookieOrNull}`);
       resolve(cookie.get('sessionName'));
     } else {
-      const sessionData = await axios.get('/api/session');
-      // Cookie expires in one day, length of active session runnning
-      cookie.set('sessionName', sessionData.data, { expires: 1 / 24 });
-      resolve(sessionData.data);
+      const sessionData = await getRequest('/api/session');
+
+      cookie.set('sessionName', sessionData, { expires: 1 / 24 });
+      resolve(sessionData);
     }
   });
 }
+
+export const saveAllAndAttemptCompiler =  async sessionName => {
+  try {
+    const response = await postRequest('/api/saveall', {
+      sessionName,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export const createNewFile = async (sessionName, fileName, isEntry) => {
+  try {
+    await postRequest('/api/newfile', {
+      sessionName,
+      fileName,
+      isEntry,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};

@@ -12,6 +12,7 @@ const FileSelectorBar = styled.default.div`
   font-size: 14px;
   font-family: Avenir, sans-serif;
   font-weight: 400;
+  overflow: hidden;
 `;
 
 const FileSelectorList = styled.default.ul`
@@ -57,6 +58,17 @@ const NewFileButton = styled.default.button`
   }
 `;
 
+const SavedIndicator = styled.default.div`
+  height: 5px
+  width: 5px;
+  position: relative;
+  bottom: 2px;
+  border-radius: 100%;
+  background-color: #bf616a;
+  display: ${props => props.isSaved ? 'none' : 'inline-block'};
+  margin-left: 5px;
+`;
+
 @inject('store') @observer
 export default class FileSelector extends Component {
   render() {
@@ -76,6 +88,7 @@ export default class FileSelector extends Component {
               isSelected={currentFileIndex === index}
             >
                 {each.name}
+                <SavedIndicator isSaved={!files[index].isEdited} />
             </FileSelectorItem>
           )}
         </FileSelectorList>

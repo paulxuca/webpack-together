@@ -44,14 +44,16 @@ const ModalTitle = styled.default.h2`
   margin: 0;
 `;
 
+const initalState = {
+  fileName: '',
+  isEntry: false,
+};
+
 @observer
 export default class CreateFileModal extends Component {
   constructor() {
     super();
-    this.state = {
-      fileName: '',
-      isEntry: false,
-    };
+    this.state = initalState;
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -59,6 +61,7 @@ export default class CreateFileModal extends Component {
     e.preventDefault();
     this.props.newFileFn(this.state.fileName, this.state.isEntry);
     this.props.closeModalFn();
+    this.setState(initalState);
   }
   
   render() {

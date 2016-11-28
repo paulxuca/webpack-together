@@ -15,6 +15,22 @@ const EditorComponentPane = styled.default.div`
   background-color: rgb(243, 245, 246);
   box-sizing: border-box;
   height: 100%;
+  flex-direction: column;
+`;
+
+const EditorEntryFilePrompt = styled.default.div`
+  min-height: 30px;
+  background: white;
+  font-family: Avenir;
+  display: flex;
+  font-size: 14px;
+  font-weight: 400;
+  max-height: 30px;
+  justify-content: flex-start;
+  align-items: center;
+  & span {
+    padding: 20px;
+  }
 `;
 
 const Editor = styled.default.div`
@@ -46,6 +62,7 @@ export default class EditorComponent extends Component {
       tabSize: 2,
       indentUnit: 2,
       lineNumbers: true,
+      lineWrapping: true,
       value: files[fileIndex].content,
       matchTags: {
         bothTags: true,
@@ -89,6 +106,9 @@ export default class EditorComponent extends Component {
   render() {
     return (
       <EditorComponentPane>
+        {this.props.fileIsEntry ? <EditorEntryFilePrompt>
+          <span>This file is an entry file for webpack.</span>
+        </EditorEntryFilePrompt> : null}
         <Editor id="codemirror">
         </Editor>
       </EditorComponentPane>

@@ -23,12 +23,33 @@ const EditorWindow = styled.default.div`
 
 @inject('store') @observer
 export default class Editor extends Component {
+  constructor() {
+    super();
+    this.handleSaveShortcut = this.handleSaveShortcut.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleSaveShortcut);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleSaveShortcut);
+  }
+
+  handleSaveShortcut(event) {
+    if ((event.metaKey || event.ctrlKey) && event.keyCode === 83) {
+      event.preventDefault();
+      this.props.store.app.saveFirebase();
+    }
+  }
+
   render() {
     const {
       files,
       currentFileIndex,
       writeToFirebase,
       newFiletoFirebase,
+      entryFileName,
     } = this.props.store.app;
 
     const { 
@@ -49,6 +70,7 @@ export default class Editor extends Component {
           <EditorComponent
             files={files}
             fileIndex={currentFileIndex}
+            fileIsEntry={files[currentFileIndex].name === entryFileName}
             writeFirebase={writeToFirebase}
           />
           <Preview /> 
