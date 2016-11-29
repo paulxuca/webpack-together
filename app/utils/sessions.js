@@ -1,6 +1,8 @@
 import cookie from 'js-cookie';
 import { getRequest, postRequest } from './request';
 
+export const needsSave = (files) => !!files.filter((eachFile) => eachFile.isEdited).length;
+
 export const getSession = () => {
   return new Promise(async(resolve, reject) => {
     const existingCookieOrNull = cookie.get('sessionName');

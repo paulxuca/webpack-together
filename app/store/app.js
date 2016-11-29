@@ -3,6 +3,7 @@ import {
   getSession,
   saveAllAndAttemptCompiler,
   createNewFile,
+  needsSave,
 } from '../utils/sessions';
 import {
   getRefByName,
@@ -17,6 +18,7 @@ class App {
   @observable currentFileIndex = 0;
   @observable filesKey = [];
   @observable entryFileName;
+  @observable isCompiling;
 
   @action getSession = async() => {
     this.sessionName = await getSession();
@@ -28,6 +30,7 @@ class App {
 
   @action sessionListener = (snapshot) => {
     const currentValue = snapshot.val();
+    this.isCompiling = currentValue.isCompiling;
     this.entryFileName = currentValue.entryFile;
     this.files = Object.keys(currentValue.files).map((key) => {
       if (this.filesKey.indexOf(key) === -1) {
@@ -48,7 +51,9 @@ class App {
   }
 
   @action saveFirebase = () => {
-    saveAllAndAttemptCompiler(this.sessionName);
+    if (needsSave(this.files) && !this.isCompiling) {
+      saveAllAndAttemptCompiler(this.sessionName);
+    }
   }
 }
 

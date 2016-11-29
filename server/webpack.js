@@ -9,5 +9,5 @@ module.exports = {
       publicPath: webpackConfig.output.publicPath,
     }),
     hotMiddleware: require('webpack-hot-middleware')(compiler),
-  },
+  }
 };

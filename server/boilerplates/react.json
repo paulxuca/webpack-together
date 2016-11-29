@@ -1,0 +1,18 @@
+{
+  "files": [{
+    "name": "app.js",
+    "content": "// Write your application code here!"
+  }, {
+    "name": "index.html",
+    "content": "<html>\n</html>"
+  }],
+  "entry": "app.js",
+  "webpack": {
+    "loaders": [
+      "react",
+      "stage-0",
+      "es2015",
+      "babel"
+    ]
+  }
+}

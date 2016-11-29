@@ -1,9 +1,8 @@
-const express = require('express');
-const app = express();
+const app = require('./app').app;
 const path = require('path');
 const bodyParser = require('body-parser');
 
-const api = require('./routes');
+const api = require('./routing');
 const firebase = require('./firebase');
 const config = require('./config');
 const webpackModules = require('./webpack');
@@ -19,6 +18,9 @@ app.use('/api', api);
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(process.cwd(), 'app', 'index.html'));
 });
+
+// Active cleaning started for firebase
+setInterval(() => firebase.activeClean(), 1000 * 60 * 60);
 
 app.listen(config.server.port, (err) => {
   if (err) {

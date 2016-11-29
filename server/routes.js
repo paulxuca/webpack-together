@@ -1,31 +1,44 @@
-const router = require('express').Router();
 const firebase = require('./firebase');
+const utils = require('./utils');
+const filesystem = require('./filesystem');
+const bundle = require('./bundle');
+const sessions = require('./sessions');
 
 const handleError = (error, res) => {
   console.log(error);
   res.status(400).json(error);
 }
 
-router.get('/session', async (req, res) => {
+const getSession = async (req, res) => {
   try {
     const session = await firebase.createSession();
     res.status(200).json(session);
   } catch (error) {
     handleError(error, res);
   }
-});
+};
 
-router.post('/saveall', async (req, res) => {
-  const { sessionName } = req.body;
+const postSaveAll = async (req, res) => {
+  const {
+    sessionName
+  } = req.body;
+
   try {
-    await firebase.saveAll(sessionName);
+    const { webpack, entryFile } = await firebase.getConfig(sessionName);
+    const currentFilestate = await firebase.saveAll(sessionName);
+    console.log(`Recompiling session ${sessionName}`);
+    await filesystem.updateSessionFiles(currentFilestate, sessionName);
+    if (!sessions.hasBundle(sessionName)) {
+      await bundle.ensureBundle(sessionName, webpack, entryFile);
+    }
+    firebase.hasCompiled(sessionName);
     res.sendStatus(200);
   } catch (error) {
     handleError(error, res);
   }
-});
+};
 
-router.post('/newfile', async (req, res) => {
+postNewFile = async (req, res) => {
   const { fileName, isEntry, sessionName } = req.body;
   try {
     await firebase.createFile(fileName, isEntry, sessionName);
@@ -33,6 +46,11 @@ router.post('/newfile', async (req, res) => {
   } catch (error) {
     handleError(error, res);
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+  getSession,
+  postNewFile,
+  postSaveAll,
+};
+
