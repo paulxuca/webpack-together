@@ -17,7 +17,7 @@ const getSession = async (req, res) => {
   try {
     const sessionName = await firebase.createSession();
     const { webpack, entryFile } = await firebase.getConfig(sessionName);
-    await bundle.ensureBundle(sessionName, webpack, entryFile);
+    await bundle.updateBundle(sessionName, webpack, entryFile);
     res.status(200).json(sessionName);
   } catch (error) {
     handleError(error, res);
@@ -36,7 +36,7 @@ const ensureSession = async (req, res) => {
 
     if (!sessions.hasBundle(sessionName)) {
       const { webpack, entryFile } = await firebase.getConfig(sessionName);
-      await bundle.ensureBundle(sessionName, webpack, entryFile);
+      await bundle.updateBundle(sessionName, webpack, entryFile);
     }
     firebase.hasCompiled(sessionName);
     res.sendStatus(200);
@@ -57,7 +57,7 @@ const postSaveAll = async (req, res) => {
     const currentFilestate = await firebase.saveAll(sessionName);
     await filesystem.updateSessionFiles(currentFilestate, sessionName);
     if (!sessions.hasBundle(sessionName)) {
-      await bundle.ensureBundle(sessionName, webpack, entryFile);
+      await bundle.updateBundle(sessionName, webpack, entryFile);
     }
     firebase.hasCompiled(sessionName);
     res.sendStatus(200);

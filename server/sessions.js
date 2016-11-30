@@ -13,14 +13,18 @@ module.exports = {
     // Making our compiler use memory fs for files input and output
     compiler.inputFileSystem = memoryFs;
     compiler.outputFileSystem = memoryFs;
-    compiler.normal.resolvers = memoryFs;
-
-    const dev = devMiddleware(compiler);
-    const hot = hotMiddleware(compiler, {
-      noInfo: true,
-      publicPath: config.output.publicPath,
+    compiler.resolvers.normal.fileSystem = memoryFs;
+    compiler.resolvers.context.fileSystem = memoryFs;
+    
+    const dev = devMiddleware(compiler, {
       lazy: true,
+      publicPath: config.output.publicPath,
+      stats: {
+        chunks: false,
+        colors: true,
+      }
     });
+    const hot = hotMiddleware(compiler);
 
     sessions[sessionName] = {
       sessionName,

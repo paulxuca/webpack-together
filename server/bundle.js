@@ -1,6 +1,6 @@
 const sessions = require('./sessions');
 const loaders = require('./loaders');
-const api = require('./api');
+const serverConfig = require('./config');
 const webpack = require('webpack');
 const path = require('path');
 
@@ -10,13 +10,13 @@ const getPublicPath = sessionName =>  path.resolve(process.cwd(), 'api', 'sandbo
 
 module.exports = {
   getPublicPath,
-  ensureBundle(sessionName, webpackConfig, entryFile) {
+  updateBundle(sessionName, webpackConfig, entryFile) {
     if(!sessions[sessionName]) {
       const loaderConfig = loaders.createLoaders(webpackConfig.loaders);
       const config = {
         devtool: 'cheap-module-eval-source-map',
         entry: [
-          `webpack-hot-middleware/client?path=http://${api.getBaseUrl}/__webpack_hmr`,
+          `webpack-hot-middleware/client?path=http://${serverConfig.apiUrl}/__webpack_hmr`,
           getEntryPoint(sessionName, entryFile),
         ],
         output: {
