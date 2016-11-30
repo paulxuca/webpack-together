@@ -38,6 +38,7 @@ export default class Editor extends Component {
       writeToFirebase,
       newFiletoFirebase,
       entryFileName,
+      isCompiling
     } = this.props.store.app;
 
     const { 
@@ -46,6 +47,7 @@ export default class Editor extends Component {
       openModal,
       onlineStatus
     } = this.props.store.editor;
+
 
     return (
       <EditorMain>
@@ -63,7 +65,10 @@ export default class Editor extends Component {
             fileIsEntry={files[currentFileIndex].name === entryFileName}
             writeFirebase={writeToFirebase}
           />
-          <Preview /> 
+          <Preview
+            isCompiling={isCompiling}
+            filesLoaded={!!files}
+          /> 
         </EditorWindow>}
         <Toasty />
       </EditorMain>

@@ -1,6 +1,7 @@
 const app = require('./app').app;
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const firebase = require('./firebase');
 const config = require('./config');
@@ -8,6 +9,7 @@ const sessions = require('./sessions');
 const routes = require('./routes');
 const utils = require('./utils');
 const preloader = require('./preload');
+const sandbox = require('./sandbox');
 
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -16,6 +18,7 @@ const webpackConfig = require('../webpack/webpack.dev.config');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 
 preloader([
@@ -46,9 +49,14 @@ if (!utils.isProduction()) {
 }
 
 app.get('/api/session', routes.getSession);
-app.post('/api/ensuresession', routes.ensureSession);
-app.post('/api/saveall', routes.postSaveAll);
-app.post('/api/newfile', routes.postNewFile);
+app.post('/api/session/ensure', routes.ensureSession);
+app.post('/api/session/save', routes.postSaveAll);
+app.post('/api/session/newfile', routes.postNewFile);
+
+
+app.use('/api/sandbox', sandbox.sandboxMiddleware);
+app.get('/api/sandbox/', sandbox.getIndex);
+app.get('/api/sandbox/*', sandbox.getFile);
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(process.cwd(), 'app', 'index.html'));

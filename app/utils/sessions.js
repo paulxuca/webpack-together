@@ -8,7 +8,7 @@ export const getSession = () => {
     const existingCookieOrNull = cookie.get('sessionName');
     if (existingCookieOrNull) {
       console.log(`Existing session ${existingCookieOrNull}`);
-      await postRequest('/api/ensuresession', { sessionName: existingCookieOrNull });
+      await postRequest('/api/session/ensure', { sessionName: existingCookieOrNull });
       resolve(existingCookieOrNull);
     } else {
       const sessionName = await getRequest('/api/session');
@@ -18,9 +18,17 @@ export const getSession = () => {
   });
 }
 
+export const getIndex = sessionName => new Promise(async (res, rej) => {
+  await getRequest('api/sandbox', {
+    headers: {
+      'x-session-name': sessionName,
+    },
+  });
+});
+
 export const saveAllAndAttemptCompiler =  async sessionName => {
   try {
-    const response = await postRequest('/api/saveall', {
+    const response = await postRequest('/api/session/save', {
       sessionName,
     });
   } catch (error) {
@@ -30,7 +38,7 @@ export const saveAllAndAttemptCompiler =  async sessionName => {
 
 export const createNewFile = async (sessionName, fileName, isEntry) => {
   try {
-    await postRequest('/api/newfile', {
+    await postRequest('/api/session/newfile', {
       sessionName,
       fileName,
       isEntry,

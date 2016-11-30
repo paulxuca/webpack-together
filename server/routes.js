@@ -17,6 +17,8 @@ const getSession = async (req, res) => {
   try {
     const sessionName = await firebase.createSession();
     const { webpack, entryFile } = await firebase.getConfig(sessionName);
+    const currentFilestate = await firebase.getFileState(sessionName);
+    await filesystem.updateSessionFiles(currentFilestate, sessionName);
     await bundle.updateBundle(sessionName, webpack, entryFile);
     res.status(200).json(sessionName);
   } catch (error) {

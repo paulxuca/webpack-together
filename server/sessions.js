@@ -17,7 +17,6 @@ module.exports = {
     compiler.resolvers.context.fileSystem = memoryFs;
     
     const dev = devMiddleware(compiler, {
-      lazy: true,
       publicPath: config.output.publicPath,
       stats: {
         chunks: false,
@@ -32,8 +31,8 @@ module.exports = {
       hot,
     };
 
-    app.use(dev);
-    app.use(hot);
+    app.use(sessions[sessionName].dev);
+    app.use(sessions[sessionName].hot);
     return sessions[sessionName];
   },
   getSession(sessionName) {
