@@ -21,18 +21,18 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 
-preloader([
-  'process',
-  'webpack-hot-middleware',
-  'webpack-dev-middleware',
-  'react',
-  'react-dom',
-  'babel-loader',
-  'babel-preset-es2015',
-  'babel-preset-react',
-  'babel-preset-stage-0',
-  'webpack',
-]);
+// preloader([
+//   'process',
+//   'webpack-hot-middleware',
+//   'webpack-dev-middleware',
+//   'react',
+//   'react-dom',
+//   'babel-loader',
+//   'babel-preset-es2015',
+//   'babel-preset-react',
+//   'babel-preset-stage-0',
+//   'webpack',
+// ]);
 
 if (!utils.isProduction()) {
   const compiler = webpack(webpackConfig);

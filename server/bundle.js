@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const path = require('path');
 
 const getEntryPoint = (sessionName, entryFile) => path.resolve(process.cwd(), 'sessions', sessionName, 'files', entryFile);
-const getOutputPoint = sessionName => path.resolve(process.cwd(), 'sessions', sessionName, 'public');
 const getPublicPath = sessionName =>  path.resolve(process.cwd(), 'api', 'sandbox', sessionName);
 
 module.exports = {
@@ -20,7 +19,7 @@ module.exports = {
           getEntryPoint(sessionName, entryFile),
         ],
         output: {
-          path: getOutputPoint(sessionName),
+          path: getPublicPath(sessionName),
           publicPath: getPublicPath(sessionName),
           filename: `bundle_${sessionName}.js`,
         },

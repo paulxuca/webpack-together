@@ -1,6 +1,5 @@
 const path = require('path');
-const MemoryFileSystem = require('memory-fs');
-const fs = new MemoryFileSystem();
+const fs = require('fs-extra');
 
 const config = require('./config');
 
@@ -22,6 +21,7 @@ module.exports = {
 
       files.forEach((file) => {
         if (file.name.split('.')[file.name.split('.').length - 1] === 'html') {
+          console.log('THIS IS AN HTML FILE');
           fs.writeFileSync(fileNameFolder(file.name, sessionName), injectScriptTag(file.content, sessionName))
         } else {
           fs.writeFileSync(fileNameFolder(file.name, sessionName), file.content);
@@ -29,5 +29,12 @@ module.exports = {
       });
       resolve();
     });
+  },
+  getSessionFile(sessionName, fileName) {
+    const path = fileNameFolder(fileName, sessionName);
+    if (!fs.readFileSync(path)) {
+      return null;
+    }
+    return fs.readFileSync(path).toString();
   }
 };

@@ -11,6 +11,8 @@ const api = {
   },
 };
 
+const apiUrl = process.env.NODE_ENV === 'production' ? `${api.prod.baseUrl}/api` : `${api.dev.baseUrl}/api`;
+
 const firebase = {
   apiKey: 'AIzaSyB0rdg2YHut3woGEwvfG3tA-PeeGxny0LA',
   authDomain: 'webpack-together.firebaseapp.com',
@@ -23,6 +25,6 @@ module.exports = {
   api,
   server,
   firebase,
-  apiUrl: process.env.NODE_ENV === 'production' ? `${api.prod.baseUrl}/api` : `${api.dev.baseUrl}/api`,
-  getWebpackUrl: (sessionName) => `${api.apiUrl}/sandbox/${sessionName}/bundle.js`
+  apiUrl,
+  getWebpackUrl: (sessionName) => `${apiUrl}/sandbox/${sessionName}/bundle.js`
 }
