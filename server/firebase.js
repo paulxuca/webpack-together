@@ -64,6 +64,19 @@ const createFile = (fileName, isEntry, sessionName) => new Promise(async (resolv
   resolve();
 });
 
+const getFileState = sessionName => new Promise( async resolve => {
+  const currentFiles = [];
+  const firebaseRef = getSessionRef(sessionName).child('files');
+  const filesList = await firebaseRef.once('value');
+  filesList.forEach((childFile) => {
+    firebaseRef.child(childFile.key).update({
+      isEdited: false,
+    });
+    currentFiles.push(childFile.val());
+  });
+  resolve(currentFiles);
+});
+
 const saveAll = sessionName => {
   return new Promise(async (resolve) => {
     const currentFiles = [];
@@ -71,15 +84,7 @@ const saveAll = sessionName => {
     mainFirebaseRef.update({
       isCompiling: true,
     });
-    const firebaseRef = getSessionRef(sessionName).child('files');
-    const filesList = await firebaseRef.once('value');
-    filesList.forEach((childFile) => {
-      firebaseRef.child(childFile.key).update({
-        isEdited: false,
-      });
-      currentFiles.push(childFile.val());
-    });
-    resolve(currentFiles);
+    resolve(await getFileState(sessionName));
   });
 };
 
@@ -96,6 +101,7 @@ module.exports = {
   getConfig,
   activeClean,
   hasCompiled,
+  getFileState,
 };
 
 

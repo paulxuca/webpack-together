@@ -1,5 +1,7 @@
 const sessions = {};
 const app = require('./app').app;
+const memoryFs = require('./filesystem').fs;
+const path = require('path');
 const webpack = require('webpack');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
@@ -7,8 +9,18 @@ const hotMiddleware = require('webpack-hot-middleware');
 module.exports = {
   addSession(sessionName, config){
     const compiler = webpack(config);
+
+    // Making our compiler use memory fs for files input and output
+    compiler.inputFileSystem = memoryFs;
+    compiler.outputFileSystem = memoryFs;
+    compiler.normal.resolvers = memoryFs;
+
     const dev = devMiddleware(compiler);
-    const hot = hotMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath });
+    const hot = hotMiddleware(compiler, {
+      noInfo: true,
+      publicPath: config.output.publicPath,
+      lazy: true,
+    });
 
     sessions[sessionName] = {
       sessionName,

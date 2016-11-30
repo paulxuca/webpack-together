@@ -1,5 +1,7 @@
 const path = require('path');
-const fs = require('fs-extra');
+const MemoryFileSystem = require('memory-fs');
+const fs = new MemoryFileSystem();
+
 const api = require('./api');
 
 const getSessionFileFolderFromName = (sessionName) => path.resolve(process.cwd(), 'sessions', sessionName, 'files');
@@ -14,17 +16,16 @@ module.exports = {
   fs: fs,
   updateSessionFiles(files, sessionName) {
     return new Promise((resolve) => {
-      if (!fs.existsSync(path.resolve(getSessionFileFolderFromName(sessionName)))) {
-        fs.mkdirpSync(getSessionFileFolderFromName(sessionName));
-      } else {
-        fs.emptyDirSync(getSessionFileFolderFromName(sessionName));
+      if (fs.existsSync(path.resolve(getSessionFileFolderFromName(sessionName)))) {
+        fs.unlinkSync(getSessionFileFolderFromName(sessionName));
       }
+      fs.mkdirpSync(getSessionFileFolderFromName(sessionName));
 
-      files.forEach((eachFile) => {
-        if (eachFile.name.split('.')[eachFile.name.split('.').length - 1] === 'html') {
-          fs.writeFileSync(fileNameFolder(eachFile.name, sessionName), injectScriptTag(eachFile.content, sessionName))
+      files.forEach((file) => {
+        if (file.name.split('.')[file.name.split('.').length - 1] === 'html') {
+          fs.writeFileSync(fileNameFolder(file.name, sessionName), injectScriptTag(file.content, sessionName))
         } else {
-          fs.writeFileSync(fileNameFolder(eachFile.name, sessionName), eachFile.content);
+          fs.writeFileSync(fileNameFolder(file.name, sessionName), file.content);
         }
       });
       resolve();

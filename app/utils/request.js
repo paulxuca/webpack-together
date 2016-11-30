@@ -10,9 +10,9 @@ export const postRequest = (url, body = {}) => new Promise(async (resolve, rejec
           'Content-Type': 'application/json',
         }
       });
-      Promise.resolve(result);
+      resolve(result);
     } catch (error) {
-      Promise.reject(error);
+      reject(error);
     }
 });
 
