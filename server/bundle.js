@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const getEntryPoint = (sessionName, entryFile) => path.resolve(process.cwd(), 'sessions', sessionName, 'files', entryFile);
-const getPublicPath = sessionName =>  path.resolve(process.cwd(), 'api', 'sandbox', sessionName);
+const getPublicPath = sessionName =>  path.join('/', 'api', 'sandbox', sessionName);
 
 module.exports = {
   getPublicPath,
@@ -15,20 +15,20 @@ module.exports = {
       const config = {
         devtool: 'cheap-module-eval-source-map',
         entry: [
-          `webpack-hot-middleware/client?path=http://${serverConfig.apiUrl}/__webpack_hmr`,
+          `webpack-hot-middleware/client?path=http://${config.api.dev.baseUrl}${getPublicPath(sessionName)}`,
           getEntryPoint(sessionName, entryFile),
         ],
         output: {
           path: getPublicPath(sessionName),
           publicPath: getPublicPath(sessionName),
-          filename: `bundle_${sessionName}.js`,
+          filename: 'bundle.js',
         },
         module: {
           loaders: loaderConfig,
         },
         plugins: [
-          new webpack.optimize.OccurrenceOrderPlugin(),
           new webpack.HotModuleReplacementPlugin(),
+          new webpack.optimize.OccurrenceOrderPlugin(),
           new webpack.NoErrorsPlugin(),
         ],
       };

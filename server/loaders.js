@@ -34,7 +34,7 @@ module.exports = {
     if (arrayContains(loaders, 'css')) {
       const cssLoader = {
         test: /\.css?$/,
-        loader: 'style!css',
+        loader: 'style-loader!css-loader',
       };
       finalLoaders.push(cssLoader);
     }

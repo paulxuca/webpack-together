@@ -1,5 +1,6 @@
 const sessions = require('./sessions');
 const fs = require('./filesystem');
+const mime = require('mime');
 
 module.exports = {
   getIndex: (req, res) => {
@@ -11,7 +12,13 @@ module.exports = {
     res.status(200).send(index);
   },
   getFile: (req, res) => {
-    res.sendStatus(200);
+    const file = fs.getBundleFile(req.sessionName);
+    if (file) {
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      res.setHeader('Content-Type', 'application/javascript');
+      res.setHeader('Content-Length', file.length);
+      res.status(200).send(file);
+    }
   },
   sandboxMiddleware(req, res, next) {
     if (sessions.hasBundle(req.cookies.sessionName)) {

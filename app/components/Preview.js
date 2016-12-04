@@ -26,7 +26,7 @@ export default class Preview extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.filesLoaded && !prevProps.isCompiling) {
-      this.refreshIframe();
+      // this.refreshIframe();
     }
   }
 

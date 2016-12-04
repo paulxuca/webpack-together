@@ -15,7 +15,7 @@ const activeClean = () => {
   database.ref('sessions').once('value', (snapshot) => {
     snapshot.forEach((firebaseSession) => {
       const sessionLastEditedDate = firebaseSession.val().lastEdited;
-      if (moment.duration(currentTime.diff(sessionLastEditedDate).asMinutes() > 60)) {
+      if (moment.duration(currentTime.diff(sessionLastEditedDate)).asMinutes() > 60) {
         sessions.removeSession(firebaseSession.key);        
         firebaseSession.remove();
       }

@@ -1,6 +1,6 @@
 const sessions = {};
 const app = require('./app').app;
-const memoryFs = require('./filesystem').fs;
+const fs = require('./filesystem').fs;
 const path = require('path');
 const webpack = require('webpack');
 const devMiddleware = require('webpack-dev-middleware');
@@ -12,6 +12,7 @@ module.exports = {
     
     const dev = devMiddleware(compiler, {
       publicPath: config.output.publicPath,
+      lazy: false,
       stats: {
         chunks: false,
         colors: true,
@@ -34,5 +35,9 @@ module.exports = {
   },
   hasBundle(sessionName) {
     return Object.keys(sessions).indexOf(sessionName) !== -1
+  },
+  initializeSessionBundles() {
+    fs.emptyDirSync(path.resolve(process.cwd(), 'sessions'));
+    fs.emptyDirSync(path.resolve(process.cwd(), 'api'));
   }
 };

@@ -12,7 +12,8 @@
       "react",
       "stage-0",
       "es2015",
-      "babel"
+      "babel",
+      "css"
     ]
   }
 }

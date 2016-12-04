@@ -48,11 +48,7 @@ const ensureSession = async (req, res) => {
 };
 
 const postSaveAll = async (req, res) => {
-  const {
-    sessionName
-  } = req.body;
-
-  console.log(`Recompiling session ${sessionName}`);
+  const { sessionName } = req.body;
 
   try {
     const { webpack, entryFile } = await firebase.getConfig(sessionName);
