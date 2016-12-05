@@ -9,17 +9,17 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 const getSessionRef = sessionName => database.ref(`sessions/${sessionName}`);
 
-const activeClean = () => {
-  console.log(`Purging firebase at ${Date.now()}`)
+const activeClean = async () => {
+  console.log(`Purging firebase at ${new moment().format()}`)
   const currentTime = new moment();
-  database.ref('sessions').once('value', (snapshot) => {
-    snapshot.forEach((firebaseSession) => {
-      const sessionLastEditedDate = firebaseSession.val().lastEdited;
-      if (moment.duration(currentTime.diff(sessionLastEditedDate)).asMinutes() > 60) {
-        sessions.removeSession(firebaseSession.key);        
-        firebaseSession.remove();
-      }
-    });
+  const currentSessions = await database.ref('sessions').once('value').then(snapshot => snapshot);
+
+  currentSessions.forEach((child) => {
+    const sessionLastEditedDate = child.val().lastEdited;
+    if (moment.duration(currentTime.diff(sessionLastEditedDate)).asMinutes() > 60) {
+      sessions.remove(child.key);
+      currentSessions[child.key].remove();
+    }
   });
 }
 

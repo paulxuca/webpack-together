@@ -69,3 +69,7 @@
 .cm-s-webpacktogether span.cm-attribute {
   color: #d08770;
 }
+
+.cm-s-webpacktogether span.cm-number, span.cm-atom {
+  color: #96b5b4;
+}

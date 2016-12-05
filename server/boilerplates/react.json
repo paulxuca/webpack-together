@@ -1,10 +1,10 @@
 {
   "files": [{
     "name": "app.js",
-    "content": "// Write your application code here!"
+    "content": "// Write your application code here!\nimport React from 'react';\nimport { render } from 'react-dom';\n\nrender(<h1>Hello World</h1>, document.getElementById('app'));"
   }, {
     "name": "index.html",
-    "content": "<html>\n</html>"
+    "content": "<html>\n  <body>\n    <div id=\"app\"></div>\n  </body>\n</html>"
   }],
   "entry": "app.js",
   "webpack": {

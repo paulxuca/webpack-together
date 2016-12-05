@@ -15,7 +15,7 @@ module.exports = {
       const config = {
         devtool: 'cheap-module-eval-source-map',
         entry: [
-          `webpack-hot-middleware/client?path=http://${config.api.dev.baseUrl}${getPublicPath(sessionName)}`,
+          `webpack-hot-middleware/client?path=/api/sandbox/${sessionName}/__webpack_hmr&reload=true&quiet=true`,
           getEntryPoint(sessionName, entryFile),
         ],
         output: {

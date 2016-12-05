@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import Modal from './Common/Modal';
+import { getMode } from '../utils/editor';
 
 const ModalContainer = styled.default.div`
   padding: 30px;
@@ -34,6 +35,11 @@ const ModalButton = styled.default.button`
     color: white;
     background: black;
   }
+  &:disabled {
+    background-color: #DDD;
+    color: #CCC;
+    border-color: #CCC;
+  }
 `;
 
 const ModalLabel = styled.default.label`
@@ -63,6 +69,20 @@ export default class CreateFileModal extends Component {
     this.props.closeModalFn();
     this.setState(initalState);
   }
+
+  isButtonDisabled = () => {
+    if (!this.state.fileName || !getMode(this.state.fileName)) {
+      return true;
+    }
+    return false;
+  }
+
+  isCheckboxDisabled = () => {
+    if (!this.state.fileName || ['jsx', 'text/typescript/, text/x-coffeescript'].indexOf(getMode(this.state.fileName)) === -1 ) {
+      return true;
+    }
+    return false;
+  }
   
   render() {
     return (
@@ -85,9 +105,10 @@ export default class CreateFileModal extends Component {
               type="checkbox"
               name="isEntryCheckbox"
               value={this.state.isEntry}
+              disabled={this.isCheckboxDisabled() &&  "true"}
               onChange={e => this.setState({ isEntry: e.target.value })}
             />
-            <ModalButton type="submit">Add</ModalButton>
+            <ModalButton type="submit" disabled={this.isButtonDisabled()}>Add</ModalButton>
           </form>
         </ModalContainer>
       </Modal>

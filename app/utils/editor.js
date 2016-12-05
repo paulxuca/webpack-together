@@ -1,15 +1,4 @@
-const MODE_MAP = {
-  js: 'jsx',
-  css: 'css',
-  ts: 'text/typescript',
-  tsx: 'text/typescript',
-  coffee: 'text/x-cofeescript',
-  less: 'text/x-less',
-  scss: 'text/x-sass',
-  html: 'htmlmixed',
-  vue: 'htmlmixed',
-  json: 'application/json',
-};
+import { MODE_MAP } from './constants';
 
 export const getMode = (fileName) => MODE_MAP[fileName.split('.')[fileName.split('.').length - 1]];
 
@@ -21,6 +10,8 @@ export const setMode = (mode, cmInstance) => require.ensure([], () => {
     require('codemirror/mode/jsx/jsx.js');
   } else if (mode === 'text/typescript') {
     require('codemirror/mode/javascript/javascript.js');
+  } else if (mode === 'css') {
+    require('codemirror/mode/css/css.js');  
   }
   cmInstance.setOption('mode', mode);
 });

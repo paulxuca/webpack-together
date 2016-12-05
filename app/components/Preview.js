@@ -18,15 +18,21 @@ const getPreviewIframeSrc = () => ``;
 @observer
 export default class Preview extends Component {
 
+  constructor() {
+    super();
+    this.iframeLoaded = false;
+  }
+
   componentDidMount() {
     if (this.props.filesLoaded) {
       this.refreshIframe();
+      this.iframeLoaded = true;
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.filesLoaded && !prevProps.isCompiling) {
-      // this.refreshIframe();
+    if (prevProps.filesLoaded && !prevProps.isCompiling && !this.iframeLoaded) {
+      this.refreshIframe();
     }
   }
 

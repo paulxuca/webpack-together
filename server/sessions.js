@@ -12,19 +12,24 @@ module.exports = {
     
     const dev = devMiddleware(compiler, {
       publicPath: config.output.publicPath,
-      lazy: false,
       stats: {
         chunks: false,
         colors: true,
       }
     });
 
+    const hot = hotMiddleware(compiler, {
+      path: `/api/sandbox/${sessionName}/__webpack_hmr`,
+    });
+
     sessions[sessionName] = {
       sessionName,
       dev,
+      hot,
     };
 
     app.use(sessions[sessionName].dev);
+    app.use(sessions[sessionName].hot);
     return sessions[sessionName];
   },
   getSession(sessionName) {
