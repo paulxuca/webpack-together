@@ -107,7 +107,7 @@ export default class EditorComponent extends Component {
     return (
       <EditorComponentPane>
         {this.props.fileIsEntry ? <EditorEntryFilePrompt>
-          <span>This file is an entry file for webpack.</span>
+          <span>This file is an <b>entry file</b> for webpack.</span>
         </EditorEntryFilePrompt> : null}
         <Editor id="codemirror">
         </Editor>

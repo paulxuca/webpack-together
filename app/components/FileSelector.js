@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import styled from 'styled-components';
+import Icon from './Common/Icon';
 
 const FileSelectorBar = styled.default.div`
   flex: 1;
@@ -79,7 +80,15 @@ export default class FileSelector extends Component {
       <FileSelectorBar>
         <FileSelectorList>
           <NewFileSection>
-            <NewFileButton onClick={() => openModal()}>New File</NewFileButton>
+            <NewFileButton
+              onClick={() => openModal()}
+            >
+              <Icon
+                type="file"
+                style={{ marginRight: 5 }}
+              />
+              New File
+            </NewFileButton>
           </NewFileSection>
           {files && files.map((each, index) =>
             <FileSelectorItem

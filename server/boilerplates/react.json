@@ -7,6 +7,14 @@
     "content": "<html>\n  <body>\n    <div id=\"app\"></div>\n  </body>\n</html>"
   }],
   "entry": "app.js",
+  "packages": [
+    {
+      "name": "react"
+    },
+    {
+      "name": "react-dom"
+    }
+  ],
   "webpack": {
     "loaders": [
       "react",

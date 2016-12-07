@@ -43,6 +43,5 @@ module.exports = {
   },
   initializeSessionBundles() {
     fs.emptyDirSync(path.resolve(process.cwd(), 'sessions'));
-    fs.emptyDirSync(path.resolve(process.cwd(), 'api'));
   }
 };

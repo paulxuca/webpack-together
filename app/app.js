@@ -1,4 +1,6 @@
 import 'sanitize.css/sanitize.css';
+import './common/icons.css';
+
 
 import React, { Component, PropTypes } from 'react';
 import { observer, Provider } from 'mobx-react';

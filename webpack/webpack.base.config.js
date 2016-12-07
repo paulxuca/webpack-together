@@ -29,6 +29,9 @@ module.exports = (config) => ({
     }, {
       test: /\.css$/,
       loaders: ['style-loader', 'css-loader'],
+    }, {
+      test: /\.woff$/,
+      loader: 'url-loader?limit=100000',
     }]
   },
   output: {

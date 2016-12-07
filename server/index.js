@@ -9,6 +9,7 @@ const sessions = require('./sessions');
 const routes = require('./routes');
 const utils = require('./utils');
 const sandbox = require('./sandbox');
+const vendor = require('./vendor');
 
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -42,14 +43,11 @@ app.post('/api/session/newfile', routes.postNewFile);
 
 app.use('/api/sandbox', sandbox.sandboxMiddleware);
 app.get('/api/sandbox', sandbox.getIndex);
-// app.get('/api/sandbox/*', sandbox.getFile);
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.resolve(process.cwd(), 'app', 'index.html'));
-// });
 
 //Clear all existing bundles and what not
 sessions.initializeSessionBundles();
+vendor.initializeVendorFolder();
 // Active cleaning started for firebase
 setInterval(() => firebase.activeClean(), 1000 * 60 * 60);
 

@@ -3,6 +3,7 @@ const utils = require('./utils');
 const filesystem = require('./filesystem');
 const bundle = require('./bundle');
 const sessions = require('./sessions');
+const vendor = require('./vendor');
 
 const handleError = (error, res) => {
   console.log(error);
@@ -16,10 +17,23 @@ const handleError = (error, res) => {
 const getSession = async (req, res) => {
   try {
     const sessionName = await firebase.createSession();
-    const { webpack, entryFile } = await firebase.getConfig(sessionName);
+    const {
+      webpack,
+      entryFile,
+      packages,
+    } = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.getFileState(sessionName);
+    const vendorHash = vendor.createVendorName(packages);
+    
+    if (!vendor.existsVendorBundle(vendorHash)) {
+      await vendor.createVendor(vendorHash, packages);
+    }
+    
     await filesystem.updateSessionFiles(currentFilestate, sessionName);
     await bundle.updateBundle(sessionName, webpack, entryFile);
+    
+    
+    
     res.status(200).json(sessionName);
   } catch (error) {
     handleError(error, res);
@@ -53,6 +67,7 @@ const postSaveAll = async (req, res) => {
   try {
     const { webpack, entryFile } = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.saveAll(sessionName);
+    
     await filesystem.updateSessionFiles(currentFilestate, sessionName);
     if (!sessions.hasBundle(sessionName)) {
       await bundle.updateBundle(sessionName, webpack, entryFile);

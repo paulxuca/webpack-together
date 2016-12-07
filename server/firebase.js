@@ -18,14 +18,14 @@ const activeClean = async () => {
     const sessionLastEditedDate = child.val().lastEdited;
     if (moment.duration(currentTime.diff(sessionLastEditedDate)).asMinutes() > 60) {
       sessions.remove(child.key);
-      currentSessions[child.key].remove();
+      currentSessions.ref(child.key).remove();
     }
   });
 }
 
 const getConfig = async sessionName => {
-  const { webpack, entryFile } = await getSessionRef(sessionName).once('value').then((snapshot) => snapshot.val());
-  return { webpack, entryFile };
+  const { webpack, entryFile, packages } = await getSessionRef(sessionName).once('value').then((snapshot) => snapshot.val());
+  return { webpack, entryFile, packages };
 }
 
 const createSession = (id = 0) => new Promise((resolve) => {
@@ -36,6 +36,7 @@ const createSession = (id = 0) => new Promise((resolve) => {
     lastEdited: Date.now(),
     entryFile: boilerplate.entry,
     webpack: boilerplate.webpack,
+    packages: boilerplate.packages,
   });
   const firebaseChildRef = firebaseRef.child('files');
   boilerplate.files.forEach((file) => {
