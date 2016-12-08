@@ -18,7 +18,8 @@ const activeClean = async () => {
     const sessionLastEditedDate = child.val().lastEdited;
     if (moment.duration(currentTime.diff(sessionLastEditedDate)).asMinutes() > 60) {
       sessions.remove(child.key);
-      currentSessions.ref(child.key).remove();
+      // We are not removing sessionfiles from firebase
+      // currentSessions.ref(child.key).remove();
     }
   });
 }

@@ -39,7 +39,6 @@ module.exports = {
         } else {
           await writeFile(fileNameFolder(file.name, sessionName), file.content);
         }
-        console.log(fileIter);
       }
       resolve();
     });

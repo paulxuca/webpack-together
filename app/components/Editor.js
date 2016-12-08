@@ -6,6 +6,7 @@ export const EditorMain = styled.default.div`
   width: 100vw;
   flex-direction: column;
   overflow: hidden;
+  position: relative
 `;
 
 export const EditorWindow = styled.default.div`

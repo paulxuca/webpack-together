@@ -13,6 +13,9 @@ import { EditorMain, EditorWindow } from '../components/Editor';
 export default class Editor extends Component {
   constructor() {
     super();
+    this.state = {
+      previewExpanded: false,
+    }
     this.handleSaveShortcut = this.handleSaveShortcut.bind(this);
   }
 
@@ -68,6 +71,8 @@ export default class Editor extends Component {
           <Preview
             isCompiling={isCompiling}
             filesLoaded={!!files}
+            onToggleExpand={() => this.setState({ previewExpanded: !this.state.previewExpanded })}
+            previewExpanded={this.state.previewExpanded}
           /> 
         </EditorWindow>}
         <Toasty />
