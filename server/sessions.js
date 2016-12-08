@@ -9,7 +9,10 @@ const hotMiddleware = require('webpack-hot-middleware');
 module.exports = {
   addSession(sessionName, config){
     const compiler = webpack(config);
-    
+    compiler.plugin('done', () => {
+      console.log('DONE COMPILING DONE COMPILING');
+    });
+
     const dev = devMiddleware(compiler, {
       publicPath: config.output.publicPath,
       stats: {

@@ -3,6 +3,7 @@ import {
   getSession,
   saveAllAndAttemptCompiler,
   createNewFile,
+  deleteFile,
   needsSave,
 } from '../utils/sessions';
 import {
@@ -19,11 +20,17 @@ class App {
   @observable filesKey = [];
   @observable entryFileName;
   @observable isCompiling;
+  @observable canChangeIndex = true;
 
   @action getSession = async() => {
     this.sessionName = await getSession();
     this.firebaseRef = getRefByName(this.sessionName);
     this.firebaseRef.on('value', this.sessionListener);
+    this.firebaseRef.on('child_changed', (w) => {
+      this.filesKey = Object.keys(w.val()).map((ea) => {
+        return w.val()[ea];
+      });
+    });
   }
 
   @action changeSelectedFileIndex = (index) => this.currentFileIndex = index;
@@ -48,6 +55,11 @@ class App {
   @action newFiletoFirebase = (fileName, isEntry) => {
     updateSessionData(this.firebaseRef);
     createNewFile(this.sessionName, fileName, isEntry);
+  }
+
+  @action deleteFileToFirebase = (fileIndex) => {
+    updateSessionData(this.firebaseRef);
+    deleteFile(this.sessionName, this.filesKey[fileIndex]);
   }
 
   @action saveFirebase = () => {

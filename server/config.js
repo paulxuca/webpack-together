@@ -26,5 +26,6 @@ module.exports = {
   server,
   firebase,
   apiUrl,
-  getWebpackUrl: (sessionName) => `${apiUrl}/sandbox/${sessionName}/bundle.js`
+  getWebpackUrl: (sessionName) => `${apiUrl}/sandbox/${sessionName}/bundle.js`,
+  getVendorUrl: vendorHash => `${apiUrl}/vendor/vendor_${vendorHash}.js`,
 }

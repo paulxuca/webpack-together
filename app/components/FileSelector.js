@@ -35,6 +35,9 @@ const FileSelectorItem = styled.default.li`
   cursor: default;
   &:hover {
     color: #3E444D;
+    >button {
+      display: inline;
+    }
   }
 `;
 
@@ -70,10 +73,22 @@ const SavedIndicator = styled.default.div`
   margin-left: 5px;
 `;
 
+const DeleteButton = styled.default.button`
+  display: none;
+  padding: 0;
+`;
+
 @inject('store') @observer
 export default class FileSelector extends Component {
   render() {
-    const { files, fileState, changeSelectedFileIndex, currentFileIndex, filesChanged } = this.props.store.app;
+    const {
+      files,
+      fileState,
+      changeSelectedFileIndex,
+      currentFileIndex,
+      filesChanged,
+      deleteFileToFirebase,
+    } = this.props.store.app;
     const { openModal } = this.props.store.editor;
 
     return (
@@ -93,11 +108,21 @@ export default class FileSelector extends Component {
           {files && files.map((each, index) =>
             <FileSelectorItem
               key={`file_${index}`}
-              onClick={() => changeSelectedFileIndex(index)}
               isSelected={currentFileIndex === index}
             >
-                {each.name}
+                <span onClick={(e) => changeSelectedFileIndex(index)}>{each.name}</span>
                 <SavedIndicator isSaved={!files[index].isEdited} />
+                <DeleteButton
+                  onClick={() => deleteFileToFirebase(index)}
+                >
+                  <Icon
+                    type="close"
+                    size={10}
+                    style={{
+                      marginLeft: 5,
+                    }}
+                  />
+                </DeleteButton>
             </FileSelectorItem>
           )}
         </FileSelectorList>

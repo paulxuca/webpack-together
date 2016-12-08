@@ -39,11 +39,11 @@ app.get('/api/session', routes.getSession);
 app.post('/api/session/ensure', routes.ensureSession);
 app.post('/api/session/save', routes.postSaveAll);
 app.post('/api/session/newfile', routes.postNewFile);
-
+app.post('/api/session/deletefile', routes.postDeleteFile);
 
 app.use('/api/sandbox', sandbox.sandboxMiddleware);
 app.get('/api/sandbox', sandbox.getIndex);
-
+app.get('/api/vendor/:vendorHash', vendor.getVendorFile);
 
 //Clear all existing bundles and what not
 sessions.initializeSessionBundles();

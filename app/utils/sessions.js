@@ -47,3 +47,14 @@ export const createNewFile = async (sessionName, fileName, isEntry) => {
     throw new Error(error);
   }
 };
+
+export const deleteFile = async(sessionName, fileHash) => {
+  try {
+    await postRequest('/api/session/deletefile', {
+      sessionName,
+      fileHash,
+    }); 
+  } catch (error) {
+    throw new Error(error);
+  }
+}

@@ -29,8 +29,8 @@ const getSession = async (req, res) => {
       await vendor.createVendor(vendorHash, packages);
     }
     
-    await filesystem.updateSessionFiles(currentFilestate, sessionName);
-    await bundle.updateBundle(sessionName, webpack, entryFile);
+    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
+    await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
     
     
     
@@ -46,13 +46,17 @@ const getSession = async (req, res) => {
 const ensureSession = async (req, res) => {
   try {
     const { sessionName } = req.body;
-
+    const { webpack, entryFile, packages } = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.getFileState(sessionName);
-    await filesystem.updateSessionFiles(currentFilestate, sessionName);
+    const vendorHash = vendor.createVendorName(packages);
+    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
+
+    if (!vendor.existsVendorBundle(vendorHash)) {
+      await vendor.createVendor(vendorHash, packages);
+    }
 
     if (!sessions.hasBundle(sessionName)) {
-      const { webpack, entryFile } = await firebase.getConfig(sessionName);
-      await bundle.updateBundle(sessionName, webpack, entryFile);
+      await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
     }
     firebase.hasCompiled(sessionName);
     res.sendStatus(200);
@@ -65,12 +69,13 @@ const postSaveAll = async (req, res) => {
   const { sessionName } = req.body;
 
   try {
-    const { webpack, entryFile } = await firebase.getConfig(sessionName);
+    const { webpack, entryFile, packages } = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.saveAll(sessionName);
+    const vendorHash = vendor.createVendorName(packages);
     
-    await filesystem.updateSessionFiles(currentFilestate, sessionName);
+    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
     if (!sessions.hasBundle(sessionName)) {
-      await bundle.updateBundle(sessionName, webpack, entryFile);
+      await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
     }
     firebase.hasCompiled(sessionName);
     res.sendStatus(200);
@@ -89,9 +94,20 @@ postNewFile = async (req, res) => {
   }
 };
 
+postDeleteFile = async (req, res) => {
+  const { fileHash, sessionName } = req.body;
+  try {
+    await firebase.deleteFile(fileHash, sessionName);
+    res.sendStatus(200);
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
 module.exports = {
   getSession,
   postNewFile,
+  postDeleteFile,
   postSaveAll,
   ensureSession
 };

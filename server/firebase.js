@@ -65,6 +65,14 @@ const createFile = (fileName, isEntry, sessionName) => new Promise(async (resolv
   resolve();
 });
 
+const deleteFile = (fileHash, sessionName) => new Promise((resolve, reject) => {
+ const firebaseRef = getSessionRef(sessionName);
+ firebaseRef.child(`files/${fileHash}`)
+  .remove()
+  .then(() => resolve())
+  .catch((error) => reject(error));
+});
+
 const getFileState = sessionName => new Promise( async resolve => {
   const currentFiles = [];
   const firebaseRef = getSessionRef(sessionName).child('files');
@@ -99,6 +107,7 @@ module.exports = {
   createSession,
   saveAll,
   createFile,
+  deleteFile,
   getConfig,
   activeClean,
   hasCompiled,
