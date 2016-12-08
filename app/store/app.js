@@ -22,20 +22,26 @@ class App {
   @observable isCompiling;
   @observable canChangeIndex = true;
 
-  @action getSession = async() => {
-    this.sessionName = await getSession();
-    this.firebaseRef = getRefByName(this.sessionName);
-    this.firebaseRef.on('value', this.sessionListener);
-    this.firebaseRef.on('child_changed', (w) => {
-      this.filesKey = Object.keys(w.val()).map((ea) => {
-        return w.val()[ea];
-      });
-    });
+  @action getSession = async () => {
+    try {
+      this.sessionName = await getSession();
+      this.firebaseRef = getRefByName(this.sessionName);
+      this.firebaseRef.on('value', this.sessionListener);
+      this.firebaseRef.on('child_changed', this.childListener);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @action changeSelectedFileIndex = (index) => this.currentFileIndex = index;
 
-  @action sessionListener = (snapshot) => {
+  childListener = (snapshot) => {
+    this.filesKey = Object.keys(snapshot.val()).map((ea) => {
+      return snapshot.val()[ea];
+    });
+  }
+
+  sessionListener = (snapshot) => {
     const currentValue = snapshot.val();
     this.isCompiling = currentValue.isCompiling;
     this.entryFileName = currentValue.entryFile;

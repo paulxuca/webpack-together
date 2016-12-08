@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
+import { debounce } from 'react-decoration';
 import styled from 'styled-components';
 
 const PreviewWindow = styled.default.div`
@@ -10,7 +11,6 @@ const PreviewWindow = styled.default.div`
     height: 100%;
     background-color: white;
     z-index: 10;
-    transition: all 0.25s ease;  
   `}
   border-left: 1px solid #EEE;
   > iframe {
@@ -55,6 +55,7 @@ export default class Preview extends Component {
   constructor() {
     super();
     this.iframeLoaded = false;
+    this.refreshIframe = this.refreshIframe.bind(this);
   }
 
   componentDidMount() {
@@ -65,13 +66,14 @@ export default class Preview extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.filesLoaded && !prevProps.isCompiling && !this.iframeLoaded) {
+    if (prevProps.filesLoaded && prevProps.isCompiling) {
       this.refreshIframe();
     }
   }
 
-  refreshIframe = () => {
-    this.iframe.src = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}/api/sandbox`;
+  @debounce(400)
+  refreshIframe() {
+    this.iframe.src = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}/api/sandbox`; 
   }
 
   render() {

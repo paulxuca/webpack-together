@@ -20,7 +20,6 @@ module.exports = {
         const config = {
           devtool: 'cheap-module-eval-source-map',
           entry: [
-            `webpack-hot-middleware/client?path=/api/sandbox/${sessionName}/__webpack_hmr&reload=true&quiet=true`,
             getEntryPoint(sessionName, entryFile),
           ],
           output: {
@@ -36,10 +35,6 @@ module.exports = {
               context: process.cwd(),
               manifest: vendorManifest,
             }),
-            new webpack.HotModuleReplacementPlugin(),
-            new webpack.optimize.OccurrenceOrderPlugin(),
-            new webpack.NoErrorsPlugin(),
-            new webpack.NamedModulesPlugin(),
           ],
         };
         sessions.addSession(sessionName, config)

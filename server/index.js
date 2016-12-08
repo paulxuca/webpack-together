@@ -35,11 +35,10 @@ if (!utils.isProduction()) {
   app.use(webpackHotMiddleware(compiler));
 }
 
-app.get('/api/session', routes.getSession);
-app.post('/api/session/ensure', routes.ensureSession);
-app.post('/api/session/save', routes.postSaveAll);
+app.post('/api/session', routes.update);
 app.post('/api/session/newfile', routes.postNewFile);
 app.post('/api/session/deletefile', routes.postDeleteFile);
+
 
 app.use('/api/sandbox', sandbox.sandboxMiddleware);
 app.get('/api/sandbox', sandbox.getIndex);

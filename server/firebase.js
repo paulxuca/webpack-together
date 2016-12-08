@@ -38,6 +38,7 @@ const createSession = (id = 0) => new Promise((resolve) => {
     entryFile: boilerplate.entry,
     webpack: boilerplate.webpack,
     packages: boilerplate.packages,
+    isCompiling: true,
   });
   const firebaseChildRef = firebaseRef.child('files');
   boilerplate.files.forEach((file) => {
@@ -104,6 +105,12 @@ const hasCompiled = sessionName => {
   });
 };
 
+const setCompiling = sessionName => {
+  getSessionRef(sessionName).update({
+    isCompiling: true,
+  });
+};
+
 module.exports = {
   createSession,
   saveAll,
@@ -113,6 +120,7 @@ module.exports = {
   activeClean,
   hasCompiled,
   getFileState,
+  setCompiling,
 };
 
 

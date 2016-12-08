@@ -10,13 +10,18 @@ const handleError = (error, res) => {
   res.status(400).json(error);
 }
 
+const update = async (req, res) => {
 
-/*
-* Creates a new session, and starts the bundle build process and watching.
-*/
-const getSession = async (req, res) => {
+  let sessionName;
+  if (req.body && req.body.sessionName) {
+    sessionName = req.body.sessionName;
+    firebase.setCompiling(sessionName);
+  } else {
+    sessionName = await firebase.createSession();
+  }
+
+
   try {
-    const sessionName = await firebase.createSession();
     const {
       webpack,
       entryFile,
@@ -24,63 +29,20 @@ const getSession = async (req, res) => {
     } = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.getFileState(sessionName);
     const vendorHash = vendor.createVendorName(packages);
-    
+
     await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
     if (!vendor.existsVendorBundle(vendorHash)) {
       await vendor.createVendor(vendorHash, packages);
     }
-    
-    await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
-
+    if (!sessions.hasBundle(sessionName)) {
+      await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
+    }
+    firebase.hasCompiled(sessionName);
     res.status(200).json(sessionName);
   } catch (error) {
     handleError(error, res);
   }
-};
-
-/*
-* Session exists, but is not building on the server. this starts the webpack build process.
-*/
-const ensureSession = async (req, res) => {
-  try {
-    const { sessionName } = req.body;
-    const { webpack, entryFile, packages } = await firebase.getConfig(sessionName);
-    const currentFilestate = await firebase.getFileState(sessionName);
-    const vendorHash = vendor.createVendorName(packages);
-    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
-
-    if (!vendor.existsVendorBundle(vendorHash)) {
-      await vendor.createVendor(vendorHash, packages);
-    }
-
-    if (!sessions.hasBundle(sessionName)) {
-      await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
-    }
-    firebase.hasCompiled(sessionName);
-    res.sendStatus(200);
-  } catch (error) {
-    handleError(error, res);
-  }
-};
-
-const postSaveAll = async (req, res) => {
-  const { sessionName } = req.body;
-
-  try {
-    const { webpack, entryFile, packages } = await firebase.getConfig(sessionName);
-    const currentFilestate = await firebase.saveAll(sessionName);
-    const vendorHash = vendor.createVendorName(packages);
-    
-    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
-    if (!sessions.hasBundle(sessionName)) {
-      await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
-    }
-    firebase.hasCompiled(sessionName);
-    res.sendStatus(200);
-  } catch (error) {
-    handleError(error, res);
-  }
-};
+}
 
 postNewFile = async (req, res) => {
   const { fileName, isEntry, sessionName } = req.body;
@@ -103,10 +65,8 @@ postDeleteFile = async (req, res) => {
 };
 
 module.exports = {
-  getSession,
   postNewFile,
   postDeleteFile,
-  postSaveAll,
-  ensureSession
+  update,
 };
 

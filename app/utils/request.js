@@ -8,9 +8,10 @@ export const postRequest = (url, body = {}) => new Promise(async (resolve, rejec
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-        }
+        },
+        timeout: 5000,
       });
-      resolve(result);
+      resolve(result.data);
     } catch (error) {
       reject(error);
     }
