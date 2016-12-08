@@ -25,15 +25,13 @@ const getSession = async (req, res) => {
     const currentFilestate = await firebase.getFileState(sessionName);
     const vendorHash = vendor.createVendorName(packages);
     
+    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
     if (!vendor.existsVendorBundle(vendorHash)) {
       await vendor.createVendor(vendorHash, packages);
     }
     
-    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
     await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
-    
-    
-    
+
     res.status(200).json(sessionName);
   } catch (error) {
     handleError(error, res);

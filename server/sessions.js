@@ -7,18 +7,16 @@ const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
 module.exports = {
-  addSession(sessionName, config){
+  addSession: (sessionName, config) => new Promise((resolve) => {
     const compiler = webpack(config);
-    compiler.plugin('done', () => {
-      console.log('DONE COMPILING DONE COMPILING');
-    });
 
     const dev = devMiddleware(compiler, {
       publicPath: config.output.publicPath,
+      quiet: true,
       stats: {
         chunks: false,
         colors: true,
-      }
+      },
     });
 
     const hot = hotMiddleware(compiler, {
@@ -33,8 +31,8 @@ module.exports = {
 
     app.use(sessions[sessionName].dev);
     app.use(sessions[sessionName].hot);
-    return sessions[sessionName];
-  },
+    resolve();
+  }),
   getSession(sessionName) {
     return sessions[sessionName];
   },

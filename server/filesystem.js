@@ -13,21 +13,34 @@ const injectScriptTag = (fileContents, vendorHash, sessionName) => {
   </body>`);
 };
 
+const writeFile = (fileName, fileContents) => new Promise((resolve, reject) => {
+  fs.writeFile(fileName, fileContents, (err) => {
+    if (err) {
+      reject(err);
+    } else {
+      resolve();
+    }
+  });
+});
+
 module.exports = {
   fs: fs,
-  updateSessionFiles(files, vendorHash, sessionName) {
-    return new Promise((resolve) => {
+  updateSessionFiles: (files, vendorHash, sessionName) => {
+    return new Promise(async (resolve) => {
       if (!fs.existsSync(getSessionFileFolderFromName(sessionName))) {
         fs.mkdirpSync(getSessionFileFolderFromName(sessionName));
       }
 
-      files.forEach((file) => {
+      let fileIter = 0;
+      for (;fileIter < files.length; fileIter++) {
+        const file = files[fileIter];
         if (file.name.split('.')[file.name.split('.').length - 1] === 'html') {
-          fs.writeFileSync(fileNameFolder(file.name, sessionName), injectScriptTag(file.content, vendorHash, sessionName))
+          await writeFile(fileNameFolder(file.name, sessionName), injectScriptTag(file.content, vendorHash, sessionName));
         } else {
-          fs.writeFileSync(fileNameFolder(file.name, sessionName), file.content);
+          await writeFile(fileNameFolder(file.name, sessionName), file.content);
         }
-      });
+        console.log(fileIter);
+      }
       resolve();
     });
   },
