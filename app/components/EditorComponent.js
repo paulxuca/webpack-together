@@ -28,6 +28,7 @@ const EditorEntryFilePrompt = styled.default.div`
   max-height: 30px;
   justify-content: flex-start;
   align-items: center;
+  border-bottom: 1px solid #EEE;
   & span {
     padding: 20px;
   }

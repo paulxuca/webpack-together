@@ -5,6 +5,7 @@ import styled from 'styled-components';
 const PreviewWindow = styled.default.div`
   flex: 1;
   position: relative;
+  border-left: 1px solid #EEE;
   > iframe {
     border: none;
     width: 100%;
