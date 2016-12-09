@@ -5,6 +5,10 @@ class Editor {
   @observable sandboxSettingsModalOpen = false;
   @observable onlineStatus = navigator.onLine;
 
+  @action onlineListener = (e) => {
+    this.onlineStatus = navigator.onLine;
+  }
+
   @action openSandboxModal = () => this.sandboxSettingsModalOpen = true;
   @action closeSandboxModal = () => this.sandboxSettingsModalOpen = false;
   @action closeModal = () => this.addFileModalOpen = false;

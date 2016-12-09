@@ -5,6 +5,7 @@ const vendor = require('./vendor');
 const fs = require('./filesystem');
 const webpack = require('webpack');
 const path = require('path');
+const hasCompiledFnFirebase = require('./firebase').hasCompiled;
 
 const getEntryPoint = (sessionName, entryFile) => path.resolve(process.cwd(), 'sessions', sessionName, 'files', entryFile);
 const getPublicPath = sessionName =>  path.join('/', 'api', 'sandbox', sessionName);
@@ -37,7 +38,7 @@ module.exports = {
             }),
           ],
         };
-        sessions.addSession(sessionName, config)
+        sessions.addSession(sessionName, config, hasCompiledFnFirebase)
         .then(() => resolve());
       }
     });

@@ -49,7 +49,7 @@ const update = async (req, res) => {
     if (!sessions.hasBundle(sessionName)) {
       await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
     }
-    firebase.hasCompiled(sessionName);
+
     res.status(200).json(sessionName);
   } catch (error) {
     handleError(error, res);

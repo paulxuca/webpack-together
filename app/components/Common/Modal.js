@@ -1,6 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const popIn = keyframes`
+  from {
+    transform: translatey(1000px);
+  }
+
+  to {
+    transform: translatey(0px);
+  }
+`;
 
 const ModalOverlay = styled.default.div`
   width: 100%;
@@ -16,6 +26,7 @@ const ModalOverlay = styled.default.div`
 
 const ModalContainer = styled.default.div`
   flex: 1;
+  animation: ${popIn} 0.2s cubic-bezier(0.77, 0, 0.175, 1);
   @media (min-width: 1000px) {
     max-width: ${props => props.width || 500}px;
   }

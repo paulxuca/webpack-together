@@ -46,11 +46,6 @@ class App {
 
   sessionListener = (snapshot) => {
     const currentValue = snapshot.val();
-    this.isCompiling = currentValue.isCompiling;
-
-    if (this.isCompiling && !this.toastMessage) {
-      this.displayToast('Recompiling in progress!');
-    }
 
     this.entryFileName = currentValue.entryFile;
     this.files = Object.keys(currentValue.files).map((key) => {
@@ -59,6 +54,13 @@ class App {
       }
       return currentValue.files[key];
     });
+
+    if (currentValue.isCompiling) {
+      this.displayToast('Recompiling in progress!');
+    } else if (this.isCompiling && !currentValue.isCompiling) {
+      this.toastMessage = false;
+    }
+    this.isCompiling = currentValue.isCompiling;        
   }
 
   @action writeToFirebase = (fileIndex, value) => {
@@ -73,7 +75,7 @@ class App {
 
   @action deleteFileToFirebase = (fileIndex) => {
     if (this.entryFileName == this.files[fileIndex].name) {
-      this.displayToast('Must have a webpack entry file!');
+      this.displayToast('Must have a webpack entry file!', 1000);
     } else {
       if (this.currentFileIndex == fileIndex) {
         this.changeSelectedFileIndex(fileIndex - 1 >= 0 ? fileIndex - 1 : 0);
@@ -93,10 +95,12 @@ class App {
     return this.files.map((each) => each.name).indexOf(name) === -1;
   }
 
-  @action displayToast = async (message) => {
+  @action displayToast = async (message, delayTime) => {
     this.toastMessage = message;
-    await delay(1000);
-    this.toastMessage = false;
+    if (delayTime) {
+      await delay(delayTime);
+      this.toastMessage = false;
+    }
   }
 }
 

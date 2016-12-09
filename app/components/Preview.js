@@ -66,12 +66,11 @@ export default class Preview extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.filesLoaded && prevProps.isCompiling) {
+    if (prevProps.filesLoaded && prevProps.isCompiling && !this.props.isCompiling) {
       this.refreshIframe();
     }
   }
 
-  @debounce(400)
   refreshIframe() {
     this.iframe.src = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}/api/sandbox`; 
   }

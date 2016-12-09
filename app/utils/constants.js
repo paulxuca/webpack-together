@@ -6,7 +6,7 @@ export const MODE_MAP = {
   coffee: 'text/x-cofeescript',
   less: 'text/x-less',
   scss: 'text/x-sass',
-  html: 'htmlmixed',
-  vue: 'htmlmixed',
+  html: 'html',
+  vue: 'html',
   json: 'application/json',
 };

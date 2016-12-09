@@ -75,3 +75,16 @@
 .cm-s-webpacktogether span.cm-number, span.cm-atom {
   color: #96b5b4;
 }
+
+.ace_gutter-layer {
+  width: 48px !important;
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 1px;
+  color: #c3c3c3;
+  background-color: white;
+}
+
+.ace_scroller {
+  left: 48px !important;
+}

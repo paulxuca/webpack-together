@@ -77,6 +77,7 @@ export default class Editor extends Component {
             fileIndex={currentFileIndex}
             fileIsEntry={files[currentFileIndex].name === entryFileName}
             writeFirebase={writeToFirebase}
+            isOnline={onlineStatus}
           />
           <Preview
             isCompiling={isCompiling}

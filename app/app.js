@@ -11,10 +11,13 @@ export default class App extends Component {
   static propTypes = {
     store: PropTypes.object,
   };
-
+  
   componentWillMount() {
     this.props.store.app.getSession();
+    window.addEventListener('online', this.props.store.editor.onlineListener);
+    window.addEventListener('offline', this.props.store.editor.onlineListener);
   }
+  
 
   render() {
     const { store } = this.props;

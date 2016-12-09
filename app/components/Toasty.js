@@ -12,6 +12,15 @@ const popIn = keyframes`
   }
 `;
 
+const popOut = keyframes`
+  from {
+    transform: translatey(0px);
+  }
+  to {
+    transform: translatey(100px);
+  }
+`;
+
 const ToastElement = styled.default.div`
   position: fixed;
   bottom: 0px;
@@ -27,7 +36,15 @@ const ToastElement = styled.default.div`
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  animation: ${popIn} 0.5s ease-in-out;
+  ${props => props.isActive ? `
+    transform: translatey(0px);
+    animation: ${popIn} 0.5s ease-in-out;
+  `:
+  `
+    transform: translatey(100px);
+    animation: ${popOut} 0.5s ease-in-out;
+  `}
+  
   >span {
     margin: 10px;
   }
@@ -38,14 +55,10 @@ const ToastElement = styled.default.div`
 export default class Toasty extends Component {
   render() {
     const { toastMessage } = this.props.store.app;
-
-    if (toastMessage) {
-      return (
-        <ToastElement>
-          <span>{toastMessage}</span>
-        </ToastElement>
-      );
-    }
-    return null;
+    return (
+      <ToastElement isActive={!!toastMessage}>
+        <span>{toastMessage}</span>
+      </ToastElement>
+    );
   }
 }

@@ -1,7 +1,25 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import Icon from './Common/Icon';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const popIn = keyframes`
+  from {
+    height: 0px;
+  }
+  to {
+    height: 30px;
+  }
+`;
+
+const popOut = keyframes`
+  from {
+    height: 30px;
+  }
+  to {
+    height: 0px;
+  }
+`;
 
 const NetworkStatusBar = styled.default.div`
   width: 100%;
@@ -10,6 +28,12 @@ const NetworkStatusBar = styled.default.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  ${props => props.isActive ?
+    ` height: 30px;
+      animation: ${popIn} 0.5s ease-in-out;`
+    :`height: 0px;
+      animation: ${popOut} 0.5s ease;`
+  }
   & span {
     font-size: 14px;
     font-family: Avenir;
@@ -20,18 +44,8 @@ const NetworkStatusBar = styled.default.div`
 
 @inject('store') @observer
 export default class NetworkStatus extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      onlineStatus: props.online
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-  }
-
   renderMessage() {
-    if (!this.state.onlineStatus) {
+    if (!this.props.online) {
       return "You've been disconnected from the internet! Your changes here may not save.";
     }
   }
@@ -39,17 +53,14 @@ export default class NetworkStatus extends Component {
   render() {
     const message = this.renderMessage();
 
-    if (message) {
-      return (
-        <NetworkStatusBar>
-          <Icon
-            type="bolt-alt"
-            color="white"
-          />
-          <span>{this.renderMessage()}</span>
-        </NetworkStatusBar>
-      );
-    }
-    return null;
+    return (
+      <NetworkStatusBar isActive={!!message}>
+        <Icon
+          type="bolt-alt"
+          color="white"
+        />
+        <span>{this.renderMessage()}</span>
+      </NetworkStatusBar>
+    );
   }
 }
