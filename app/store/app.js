@@ -12,6 +12,8 @@ import {
   updateSessionData,
 } from '../utils/firebase';
 
+const delay = (timeout) => new Promise(resolve => setTimeout(() => resolve(), timeout));
+
 class App {
   @observable sessionName;
   @observable firebaseRef;
@@ -20,6 +22,7 @@ class App {
   @observable filesKey = [];
   @observable entryFileName;
   @observable isCompiling;
+  @observable toastMessage;
   @observable canChangeIndex = true;
 
   @action getSession = async () => {
@@ -44,6 +47,11 @@ class App {
   sessionListener = (snapshot) => {
     const currentValue = snapshot.val();
     this.isCompiling = currentValue.isCompiling;
+
+    if (this.isCompiling && !this.toastMessage) {
+      this.displayToast('Recompiling in progress!');
+    }
+
     this.entryFileName = currentValue.entryFile;
     this.files = Object.keys(currentValue.files).map((key) => {
       if (this.filesKey.indexOf(key) === -1) {
@@ -64,9 +72,15 @@ class App {
   }
 
   @action deleteFileToFirebase = (fileIndex) => {
-    this.changeSelectedFileIndex(fileIndex - 1 >= 0 ? fileIndex - 1 : 0);
-    updateSessionData(this.firebaseRef);
-    deleteFile(this.sessionName, this.filesKey[fileIndex]);
+    if (this.entryFileName == this.files[fileIndex].name) {
+      this.displayToast('Must have a webpack entry file!');
+    } else {
+      if (this.currentFileIndex == fileIndex) {
+        this.changeSelectedFileIndex(fileIndex - 1 >= 0 ? fileIndex - 1 : 0);
+      }
+      updateSessionData(this.firebaseRef);
+      deleteFile(this.sessionName, this.filesKey[fileIndex]);
+    }
   }
 
   @action saveFirebase = () => {
@@ -77,6 +91,12 @@ class App {
 
   @action fileExists = (name) => {
     return this.files.map((each) => each.name).indexOf(name) === -1;
+  }
+
+  @action displayToast = async (message) => {
+    this.toastMessage = message;
+    await delay(1000);
+    this.toastMessage = false;
   }
 }
 

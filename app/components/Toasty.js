@@ -16,10 +16,10 @@ const ToastElement = styled.default.div`
   position: fixed;
   bottom: 0px;
   left: 0px;
+  z-index: 10;
   background-color: black;
   min-width: 200px;
   min-height: 50px;
-  z-index: 3;
   margin: 20px;
   color: white;
   font-family: Avenir;
@@ -28,27 +28,21 @@ const ToastElement = styled.default.div`
   justify-content: center;
   font-size: 14px;
   animation: ${popIn} 0.5s ease-in-out;
+  >span {
+    margin: 10px;
+  }
 `;
 
 
 @inject('store') @observer
 export default class Toasty extends Component {
-  renderMessage() {
-    const { isCompiling } = this.props.store.app;
-
-    if (isCompiling) {
-      return 'Recompiling in progress!';
-    }
-    return false;
-  }
-
   render() {
-    const toastMessage = this.renderMessage();
+    const { toastMessage } = this.props.store.app;
 
     if (toastMessage) {
       return (
         <ToastElement>
-          {toastMessage}
+          <span>{toastMessage}</span>
         </ToastElement>
       );
     }

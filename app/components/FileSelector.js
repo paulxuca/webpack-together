@@ -14,6 +14,7 @@ const FileSelectorBar = styled.default.div`
   font-family: Avenir, sans-serif;
   font-weight: 400;
   overflow: hidden;
+  display: flex;
 `;
 
 const FileSelectorList = styled.default.ul`
@@ -23,11 +24,13 @@ const FileSelectorList = styled.default.ul`
   height: 100%;
   display: flex;
   align-items: center;
+  overflow: scroll;
+  flex: 4;
 `;
 
 const FileSelectorItem = styled.default.li`
-  padding: 20px;
-  min-width: 100px;
+  min-width: 120px;
+  padding: 20px 0px;
   background-color: ${props => props.isSelected ? '#EFF1F5' : '#DFE1E8'};
   color: ${props => props.isSelected ? '#3E444D' : '#6C7E8C'};
   display: inline;
@@ -42,16 +45,18 @@ const FileSelectorItem = styled.default.li`
 `;
 
 const NewFileSection = styled.default.div`
-  width: 120px;
+  width: 250px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex: 1;
+  background-color: #DFE1E8;
 `;
 
 const NewFileButton = styled.default.button`
   flex: 1;
   font-family: Avenir;
   padding-bottom: 0px;
+  font-size: 12px;
   color: rgba(0, 0, 0, 0.8);
   &:focus {
     outline: 0;
@@ -94,17 +99,6 @@ export default class FileSelector extends Component {
     return (
       <FileSelectorBar>
         <FileSelectorList>
-          <NewFileSection>
-            <NewFileButton
-              onClick={() => openModal()}
-            >
-              <Icon
-                type="file"
-                style={{ marginRight: 5 }}
-              />
-              New File
-            </NewFileButton>
-          </NewFileSection>
           {files && files.map((each, index) =>
             <FileSelectorItem
               key={`file_${index}`}
@@ -126,6 +120,28 @@ export default class FileSelector extends Component {
             </FileSelectorItem>
           )}
         </FileSelectorList>
+                  <NewFileSection>
+            <NewFileButton
+              onClick={() => openModal()}
+            >
+              <Icon
+                type="file"
+                style={{ marginRight: 5 }}
+                size={10}
+              />
+              New File
+            </NewFileButton>
+            <NewFileButton
+              onClick={() => openModal()}
+            >
+              <Icon
+                type="settings"
+                style={{ marginRight: 5 }}
+                size={10}
+              />
+              Sandbox Settings
+            </NewFileButton>
+          </NewFileSection>
       </FileSelectorBar>
     );
   }
