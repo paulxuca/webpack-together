@@ -53,6 +53,7 @@ export default class EditorComponent extends Component {
     super();
     this.changeCodeMirrorValueLight = this.changeCodeMirrorValueLight.bind(this);
     this.onCodeMirrorValueChange = this.onCodeMirrorValueChange.bind(this);
+    this.recordCursorPosition = this.recordCursorPosition.bind(this);
     this.state = initalState;
   }
 
@@ -76,31 +77,34 @@ export default class EditorComponent extends Component {
     });
     setMode(getMode(this.props.files[this.props.fileIndex].name), this.codemirror);
     this.codemirror.on('change', this.onCodeMirrorValueChange);
+    // this.codemirror.on('change', this.recordCursorPosition);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.codemirror.off('change', this.onCodeMirrorValueChange);
-
-    const nextFileContents = nextProps.files[nextProps.fileIndex].content;
-    this.changeCodeMirrorValueLight(nextFileContents);
-
+    // this.codemirror.off('change', this.recordCursorPosition);    
+    
+    const nextFileContents = nextProps.files[nextProps.fileIndex].content;    
+    this.changeCodeMirrorValueLight(nextFileContents);    
+    
     if (nextProps.fileIndex !== this.props.fileIndex) {
-      this.codemirror.getDoc().clearHistory();
       setMode(getMode(nextProps.files[nextProps.fileIndex].name), this.codemirror);
     } else {
       this.codemirror.setCursor(this.state.cursor);
     }
-    this.codemirror.on('change', this.onCodeMirrorValueChange);
+    // this.codemirror.on('change', this.recordCursorPosition);
   }
 
   changeCodeMirrorValueLight(value) {
     this.codemirror.setValue(value);
   }
 
-  onCodeMirrorValueChange(instance, event) {
+  recordCursorPosition() {
     this.setState({
       cursor: this.codemirror.getCursor(),
     });
+  }
+
+  onCodeMirrorValueChange(instance, event) {
     this.props.writeFirebase(this.props.fileIndex, this.codemirror.getValue());
   }
 

@@ -5,6 +5,7 @@ import FileSelector from '../components/FileSelector';
 import EditorComponent from '../components/EditorComponent';
 import Preview from '../components/Preview';
 import CreateFileModal from '../components/CreateFileModal';
+import SandboxSettingsModal from '../components/SandboxSettingsModal';
 import Toasty from '../components/Toasty';
 import NetworkStatus from '../components/NetworkStatus';
 import { EditorMain, EditorWindow } from '../components/Editor';
@@ -49,7 +50,11 @@ export default class Editor extends Component {
       addFileModalOpen,
       closeModal,
       openModal,
-      onlineStatus
+      onlineStatus,
+
+      openSandboxModal,
+      closeSandboxModal,
+      sandboxSettingsModalOpen,
     } = this.props.store.editor;
 
     return (
@@ -61,6 +66,10 @@ export default class Editor extends Component {
           closeModalFn={closeModal}
           newFileFn={newFiletoFirebase}
           fileExists={fileExists}
+        />
+        <SandboxSettingsModal
+          openModal={sandboxSettingsModalOpen}
+          closeModalFn={closeSandboxModal}
         />
         { files && <EditorWindow>
           <EditorComponent

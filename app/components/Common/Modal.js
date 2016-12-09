@@ -16,7 +16,12 @@ const ModalOverlay = styled.default.div`
 
 const ModalContainer = styled.default.div`
   flex: 1;
-  max-width: 500px;
+  @media (min-width: 1000px) {
+    max-width: ${props => props.width || 500}px;
+  }
+  @media (max-width: 999px) {
+    max-width: 500px;
+  }
   background: #EFF1F5;
 `;
 
@@ -51,11 +56,11 @@ export default class Modal extends Component {
   }
 
   render() {
-    const { children, openModal } = this.props;
+    const { children, openModal, width } = this.props;
 
     return (
       <ModalOverlay open={openModal}>
-        <ModalContainer innerRef={(modal) => { this.modal = modal; }}>
+        <ModalContainer width={width} innerRef={(modal) => { this.modal = modal; }}>
           {children}
         </ModalContainer>
       </ModalOverlay>

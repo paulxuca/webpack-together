@@ -94,7 +94,7 @@ export default class FileSelector extends Component {
       filesChanged,
       deleteFileToFirebase,
     } = this.props.store.app;
-    const { openModal } = this.props.store.editor;
+    const { openModal, openSandboxModal } = this.props.store.editor;
 
     return (
       <FileSelectorBar>
@@ -132,7 +132,7 @@ export default class FileSelector extends Component {
               New File
             </NewFileButton>
             <NewFileButton
-              onClick={() => openModal()}
+              onClick={() => openSandboxModal()}
             >
               <Icon
                 type="settings"
