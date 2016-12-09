@@ -41,7 +41,8 @@ export default class Editor extends Component {
       writeToFirebase,
       newFiletoFirebase,
       entryFileName,
-      isCompiling
+      isCompiling,
+      fileExists,
     } = this.props.store.app;
 
     const { 
@@ -51,7 +52,6 @@ export default class Editor extends Component {
       onlineStatus
     } = this.props.store.editor;
 
-
     return (
       <EditorMain>
         <NetworkStatus online={onlineStatus} />
@@ -60,6 +60,7 @@ export default class Editor extends Component {
           openModal={addFileModalOpen}
           closeModalFn={closeModal}
           newFileFn={newFiletoFirebase}
+          fileExists={fileExists}
         />
         { files && <EditorWindow>
           <EditorComponent

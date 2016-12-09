@@ -3,7 +3,9 @@ import styled from 'styled-components';
 
 const IconContainer = styled.default.span`
   font-size: ${props => props.size || 'inherit'};
+  color: ${props => props.color || 'default'};
+  font-family: 'themify' !important;
 `;
 
-const Icon = ({ type, size, ...otherProps }) => <IconContainer size={size} className={`ti-${type}`} {...otherProps} />;
+const Icon = ({ type, size, color, ...otherProps }) => <IconContainer size={size} color={color} className={`ti-${type}`} {...otherProps} />;
 export default Icon;

@@ -4,6 +4,7 @@ const filesystem = require('./filesystem');
 const bundle = require('./bundle');
 const sessions = require('./sessions');
 const vendor = require('./vendor');
+const intentEnum = require('./intent_enum');
 
 const handleError = (error, res) => {
   console.log(error);
@@ -11,7 +12,6 @@ const handleError = (error, res) => {
 }
 
 const update = async (req, res) => {
-
   let sessionName;
   if (req.body && req.body.sessionName) {
     sessionName = req.body.sessionName;
@@ -20,6 +20,18 @@ const update = async (req, res) => {
     sessionName = await firebase.createSession();
   }
 
+  if (req.body && req.body.intent) {
+    if (req.body.intent === intentEnum.ADD_FILE) {
+      const {
+        fileName,
+        isEntry,
+      } = req.body;
+      await firebase.createFile(fileName, isEntry, sessionName);
+    } else if (req.body.intent === intentEnum.REMOVE_FILE) {
+      const { fileHash } = req.body;
+      await firebase.deleteFile(fileHash, sessionName);
+    }
+  }
 
   try {
     const {
@@ -44,29 +56,7 @@ const update = async (req, res) => {
   }
 }
 
-postNewFile = async (req, res) => {
-  const { fileName, isEntry, sessionName } = req.body;
-  try {
-    await firebase.createFile(fileName, isEntry, sessionName);
-    res.sendStatus(200);
-  } catch (error) {
-    handleError(error, res);
-  }
-};
-
-postDeleteFile = async (req, res) => {
-  const { fileHash, sessionName } = req.body;
-  try {
-    await firebase.deleteFile(fileHash, sessionName);
-    res.sendStatus(200);
-  } catch (error) {
-    handleError(error, res);
-  }
-};
-
 module.exports = {
-  postNewFile,
-  postDeleteFile,
   update,
 };
 

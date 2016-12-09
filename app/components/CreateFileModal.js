@@ -61,6 +61,7 @@ export default class CreateFileModal extends Component {
     super();
     this.state = initalState;
     this.onSubmit = this.onSubmit.bind(this);
+    this.isButtonDisabled = this.isButtonDisabled.bind(this);
   }
 
   onSubmit(e) {
@@ -70,8 +71,8 @@ export default class CreateFileModal extends Component {
     this.setState(initalState);
   }
 
-  isButtonDisabled = () => {
-    if (!this.state.fileName || !getMode(this.state.fileName)) {
+  isButtonDisabled() {
+    if (!this.state.fileName || !getMode(this.state.fileName) || !this.props.fileExists(this.state.fileName)) {
       return true;
     }
     return false;

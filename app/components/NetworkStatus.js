@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
+import Icon from './Common/Icon';
 import styled from 'styled-components';
 
 const NetworkStatusBar = styled.default.div`
@@ -13,7 +14,7 @@ const NetworkStatusBar = styled.default.div`
     font-size: 14px;
     font-family: Avenir;
     color: white;
-    margin-left: 30px;
+    margin-left: 10px;
   }
 `;
 
@@ -31,7 +32,7 @@ export default class NetworkStatus extends Component {
 
   renderMessage() {
     if (!this.state.onlineStatus) {
-      return "You've been disconnected. Your changes here may not save.";
+      return "You've been disconnected from the internet! Your changes here may not save.";
     }
   }
 
@@ -41,6 +42,10 @@ export default class NetworkStatus extends Component {
     if (message) {
       return (
         <NetworkStatusBar>
+          <Icon
+            type="bolt-alt"
+            color="white"
+          />
           <span>{this.renderMessage()}</span>
         </NetworkStatusBar>
       );

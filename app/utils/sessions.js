@@ -38,8 +38,9 @@ export const saveAllAndAttemptCompiler =  async sessionName => {
 
 export const createNewFile = async (sessionName, fileName, isEntry) => {
   try {
-    await postRequest('/api/session/newfile', {
+    await postRequest('/api/session', {
       sessionName,
+      intent: 1, // add file intent
       fileName,
       isEntry,
     });
@@ -50,10 +51,11 @@ export const createNewFile = async (sessionName, fileName, isEntry) => {
 
 export const deleteFile = async(sessionName, fileHash) => {
   try {
-    await postRequest('/api/session/deletefile', {
+    await postRequest('/api/session', {
       sessionName,
       fileHash,
-    }); 
+      intent: 2, // Remove file intent
+    });
   } catch (error) {
     throw new Error(error);
   }

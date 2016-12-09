@@ -24,7 +24,6 @@ const PreviewWindowControls = styled.default.div`
   position: absolute;
   top: 0px;
   right: 0px;
-  width: 100%;
   margin: 10px;
 `;
 
@@ -36,6 +35,7 @@ const PreviewButton = styled.default.button`
   border: 1px solid #C3C3C3;
   padding: 4px 8px;
   border-radius: 5px;
+  background: white;
   &:hover {
     color: #222;
     border-color: #B8B8C2;

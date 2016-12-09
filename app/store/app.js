@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import {
   getSession,
   saveAllAndAttemptCompiler,
@@ -64,6 +64,7 @@ class App {
   }
 
   @action deleteFileToFirebase = (fileIndex) => {
+    this.changeSelectedFileIndex(fileIndex - 1 >= 0 ? fileIndex - 1 : 0);
     updateSessionData(this.firebaseRef);
     deleteFile(this.sessionName, this.filesKey[fileIndex]);
   }
@@ -72,6 +73,10 @@ class App {
     if (needsSave(this.files) && !this.isCompiling) {
       saveAllAndAttemptCompiler(this.sessionName);
     }
+  }
+
+  @action fileExists = (name) => {
+    return this.files.map((each) => each.name).indexOf(name) === -1;
   }
 }
 
