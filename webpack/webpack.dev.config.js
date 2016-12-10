@@ -11,6 +11,7 @@ const config = require('./webpack.base.config')({
   ],
   cache: true,
   devtool: 'eval',
+  cssLoader: 'style-loader!css-loader',
 });
 
 module.exports = config;

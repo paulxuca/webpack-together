@@ -28,15 +28,15 @@ module.exports = (config) => ({
       }
     }, {
       test: /\.css$/,
-      loaders: ['style-loader', 'css-loader'],
+      loader: config.cssLoader,
     }, {
       test: /\.woff$/,
       loader: 'url-loader?limit=100000',
     }]
   },
-  output: {
+  output: Object.assign({}, {
     path: path.resolve(process.cwd(), 'public'),
     publicPath: '',
-    filename: 'bundle.js'
-  },
+    filename: 'bundle.js',
+  }, config.output),
 });
