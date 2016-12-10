@@ -59,7 +59,7 @@ export default class NetworkStatus extends Component {
           type="bolt-alt"
           color="white"
         />
-        <span>{this.renderMessage()}</span>
+        <span>{message}</span>
       </NetworkStatusBar>
     );
   }

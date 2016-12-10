@@ -11,7 +11,6 @@ class EmitHandler {
   constructor(sessionName, emitter) {
     this.sessionName = sessionName;
     this.emitter = emitter;
-    // this.handler = this.handler.bind(this);
     this.handler = _.debounce(this.handler.bind(this), 300);
   }
   

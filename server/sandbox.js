@@ -1,5 +1,6 @@
 const sessions = require('./sessions');
 const fs = require('./filesystem');
+const firebase = require('./firebase');
 const mime = require('mime');
 const path = require('path');
 
@@ -21,12 +22,6 @@ module.exports = {
       res.setHeader('Content-Type', 'application/javascript');
       res.setHeader('Content-Length', file.length);
       res.status(200).send(file);
-    }
-  },
-  sandboxMiddleware(req, res, next) {
-    if (sessions.hasBundle(req.cookies.sessionName)) {
-      req.sessionName = req.cookies.sessionName;
-      next();
     }
   },
   getTools(req, res) {

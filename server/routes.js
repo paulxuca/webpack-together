@@ -11,46 +11,54 @@ const handleError = (error, res) => {
   res.status(400).json(error);
 }
 
-const update = async (req, res) => {
-  let sessionName;
-  if (req.body && req.body.sessionName) {
-    sessionName = req.body.sessionName;
-    firebase.setCompiling(sessionName);
-  } else {
-    sessionName = await firebase.createSession();
-  }
-
+const intentMiddleware = async (req, res, next) => {
   if (req.body && req.body.intent) {
-    if (req.body.intent === intentEnum.ADD_FILE) {
-      const {
-        fileName,
-        isEntry,
-      } = req.body;
-      await firebase.createFile(fileName, isEntry, sessionName);
-    } else if (req.body.intent === intentEnum.REMOVE_FILE) {
-      const { fileHash } = req.body;
-      await firebase.deleteFile(fileHash, sessionName);
+    switch (req.body.intent) {
+      case intentEnum.ADD_FILE:
+        const { fileName, isEntry } = req.body;
+        await firebase.createFile(fileName, isEntry, req.sessionName);
+        next();
+      case intentEnum.REMOVE_FILE:
+        const { fileHash } = req.body;
+        await firebase.deleteFile(fileHash, req.sessionName);
+        next();
+      default:
+        next();
     }
   }
+  next();
+}
+
+const sandboxMiddleware = async (req, res, next) => {
+  if (sessions.hasBundle(req.cookies.sessionName)) {
+    req.sessionName = req.cookies.sessionName;
+    firebase.setCompiling(req.cookies.sessionName);
+    next();
+  } else {
+    req.sessionName = await firebase.createSession();
+    next();
+  }
+};
+
+const mergeSessionData = (sessionConfig, sessionName) => Object.assign({}, sessionConfig, { sessionName });
+
+const update = async (req, res) => {
+  const { sessionName } = req;
 
   try {
-    const {
-      webpack,
-      entryFile,
-      packages,
-    } = await firebase.getConfig(sessionName);
+    const sessionConfig = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.getFileState(sessionName);
-    const vendorHash = vendor.createVendorName(packages);
+    const vendorHash = vendor.createVendorName(sessionConfig.packages);
 
     await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
     if (!vendor.existsVendorBundle(vendorHash)) {
-      await vendor.createVendor(vendorHash, packages);
+      await vendor.createVendor(vendorHash, sessionConfig.packages);
     }
     if (!sessions.hasBundle(sessionName)) {
-      await bundle.updateBundle(sessionName, vendorHash, webpack, entryFile);
+      await bundle.updateBundle(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);
     }
 
-    res.status(200).json(sessionName);
+    res.status(200).json(mergeSessionData(sessionConfig, sessionName));
   } catch (error) {
     handleError(error, res);
   }
@@ -58,5 +66,7 @@ const update = async (req, res) => {
 
 module.exports = {
   update,
+  intentMiddleware,
+  sandboxMiddleware,
 };
 

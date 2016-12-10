@@ -40,7 +40,8 @@ const createSession = (id = 0) => new Promise((resolve) => {
   });
   const firebaseChildRef = firebaseRef.child('files');
   boilerplate.files.forEach((file) => {
-    firebaseChildRef.push()
+    firebaseChildRef
+      .push()
       .set({
         name: file.name,
         content: file.content,
@@ -57,11 +58,12 @@ const createFile = (fileName, isEntry, sessionName) => new Promise(async (resolv
       entryFile: fileName,
     });
   }
-  firebaseRef.child('files').push()
-  .set({
-    name: fileName,
-    content: '',
-  });
+  firebaseRef.child('files')
+    .push()
+    .set({
+      name: fileName,
+      content: '',
+    });
   resolve();
 });
 

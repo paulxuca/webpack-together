@@ -35,9 +35,10 @@ if (!utils.isProduction()) {
   app.use(webpackHotMiddleware(compiler));
 }
 
-app.post('/api/session', routes.update);
+app.use(/\/api\/(sandbox|session)/, routes.sandboxMiddleware);
+app.use('api/session', routes.intentMiddleware);
 
-app.use('/api/sandbox', sandbox.sandboxMiddleware);
+app.post('/api/session', routes.update);
 app.get('/api/sandbox', sandbox.getIndex);
 app.get('/api/sandbox/tools.js', sandbox.getTools);
 app.get('/api/vendor/:vendorHash', vendor.getVendorFile);
@@ -45,6 +46,7 @@ app.get('/api/vendor/:vendorHash', vendor.getVendorFile);
 sessions.initializeSessionBundles();
 vendor.initializeVendorFolder();
 // Active cleaning started for firebase
+
 setInterval(() => firebase.activeClean(), 1000 * 60 * 60);
 
 app.listen(config.server.port, (err) => {

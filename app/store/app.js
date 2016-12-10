@@ -27,7 +27,8 @@ class App {
 
   @action getSession = async () => {
     try {
-      this.sessionName = await getSession();
+      const session = await getSession();
+      this.sessionName = session.sessionName;
       this.firebaseRef = getRefByName(this.sessionName);
       this.firebaseRef.on('value', this.sessionListener);
       this.firebaseRef.on('child_changed', this.childListener);

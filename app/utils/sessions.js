@@ -8,12 +8,12 @@ export const getSession = () => {
     const existingCookieOrNull = cookie.get('sessionName');
     if (existingCookieOrNull) {
       console.log(`Existing session ${existingCookieOrNull}`);
-      await postRequest('/api/session', { sessionName: existingCookieOrNull });
-      resolve(existingCookieOrNull);
+      await postRequest('/api/session');
+      resolve({ sessionName: existingCookieOrNull });
     } else {
-      const sessionName = await postRequest('/api/session');
-      cookie.set('sessionName', sessionName, { expires: 1 / 24 });
-      resolve(sessionName);
+      const session = await postRequest('/api/session');
+      cookie.set('sessionName', session.sessionName, { expires: 1 / 24 });
+      resolve(session);
     }
   });
 }
