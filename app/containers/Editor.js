@@ -17,15 +17,24 @@ export default class Editor extends Component {
     this.state = {
       previewExpanded: false,
     }
+    this.handleIframeMessage = this.handleIframeMessage.bind(this);
     this.handleSaveShortcut = this.handleSaveShortcut.bind(this);
   }
 
   componentDidMount() {
+    window.addEventListener('message', this.handleIframeMessage);
     window.addEventListener('keydown', this.handleSaveShortcut);
   }
 
   componentWillUnmount() {
+    window.removeEventListener('message', this.handleIframeMessage);
     window.removeEventListener('keydown', this.handleSaveShortcut);
+  }
+
+  handleIframeMessage(e) {
+    if (e.data.errorMessage) {
+      this.props.store.editor.setErrorMessage(e.data.errorMessage);  
+    }
   }
 
   handleSaveShortcut(event) {
@@ -55,6 +64,8 @@ export default class Editor extends Component {
       openSandboxModal,
       closeSandboxModal,
       sandboxSettingsModalOpen,
+      errorMessage,
+      setErrorMessage,
     } = this.props.store.editor;
 
     return (
@@ -82,6 +93,8 @@ export default class Editor extends Component {
           <Preview
             isCompiling={isCompiling}
             filesLoaded={!!files}
+            error={errorMessage}
+            setError={setErrorMessage}
             onToggleExpand={() => this.setState({ previewExpanded: !this.state.previewExpanded })}
             previewExpanded={this.state.previewExpanded}
           /> 

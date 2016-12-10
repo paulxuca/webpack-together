@@ -46,8 +46,18 @@ const PreviewButton = styled.default.button`
   }
 `;
 
-const getPreviewIframeSrc = () => ``;
-
+const ErrorMessage = styled.default.div`
+  height: 60px;
+  width: 100%;
+  background-color: #C4534F;
+  color: white;
+  position: absolute;
+  bottom: 0px;
+  font-family: Avenir;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 @observer
 export default class Preview extends Component {
@@ -72,6 +82,7 @@ export default class Preview extends Component {
   }
 
   refreshIframe() {
+    this.props.setError(false);
     this.iframe.src = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}/api/sandbox`; 
   }
 
@@ -84,6 +95,9 @@ export default class Preview extends Component {
             this.props.previewExpanded ? 'Close Preview' : 'Expand Preview'
           }</PreviewButton>
         </PreviewWindowControls>
+        {this.props.error && <ErrorMessage>
+          {this.props.error}
+        </ErrorMessage>}
       </PreviewWindow>
     );
   }

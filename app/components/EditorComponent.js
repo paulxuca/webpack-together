@@ -44,11 +44,11 @@ export default class EditorComponent extends Component {
         tabSize: 2,
         useSoftTabs: true,
       });
-      this.editor.getSession().setMode(`ace/mode/${getMode(files[fileIndex].name)}`);
       this.editor.getSession().on('change', this.handleEditorChange);
       this.editor.getSession().selection.on('changeCursor', this.handleCursorPositionChange);
       this.editor.getSession().on('paste', this.handleCursorPositionChange);
       this.editor.clearSelection();
+      getMode(files[fileIndex].name, this.editor);      
     }
 
     componentWillReceiveProps(nextProps) {
@@ -63,7 +63,7 @@ export default class EditorComponent extends Component {
       }
 
       if (nextProps.fileIndex !== this.props.fileIndex) {
-        this.editor.getSession().setMode(`ace/mode/${getMode(nextFile.name)}`);
+        getMode(nextFile.name, this.editor);
       } else {
         this.editor.moveCursorTo(this.state.cursor.row, this.state.cursor.column);
       }

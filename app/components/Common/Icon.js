@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const IconContainer = styled.default.span`
+const IconContainer = styled.default.i`
   font-size: ${props => props.size || 'inherit'};
   color: ${props => props.color || 'default'};
   font-family: 'themify' !important;

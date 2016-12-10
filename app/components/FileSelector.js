@@ -56,8 +56,13 @@ const NewFileButton = styled.default.button`
   flex: 1;
   font-family: Avenir;
   padding-bottom: 0px;
-  font-size: 12px;
+  font-size: 14px;
   color: rgba(0, 0, 0, 0.8);
+  @media (max-width: 800px) {
+    >span {
+      display: none;
+    }
+  }
   &:focus {
     outline: 0;
   }
@@ -120,7 +125,7 @@ export default class FileSelector extends Component {
             </FileSelectorItem>
           )}
         </FileSelectorList>
-                  <NewFileSection>
+          <NewFileSection>
             <NewFileButton
               onClick={() => openModal()}
             >
@@ -129,7 +134,7 @@ export default class FileSelector extends Component {
                 style={{ marginRight: 5 }}
                 size={10}
               />
-              New File
+              <span>New File</span>
             </NewFileButton>
             <NewFileButton
               onClick={() => openSandboxModal()}
@@ -139,9 +144,9 @@ export default class FileSelector extends Component {
                 style={{ marginRight: 5 }}
                 size={10}
               />
-              Sandbox Settings
-            </NewFileButton>
-          </NewFileSection>
+              <span>Sandbox Settings</span>
+          </NewFileButton>
+        </NewFileSection>
       </FileSelectorBar>
     );
   }

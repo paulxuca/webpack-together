@@ -1,6 +1,9 @@
 const sessions = require('./sessions');
 const fs = require('./filesystem');
 const mime = require('mime');
+const path = require('path');
+
+const tools = fs.fs.readFileSync(path.resolve(process.cwd(), 'server', 'tools.js'), 'utf8').toString();
 
 module.exports = {
   getIndex: (req, res) => {
@@ -25,5 +28,11 @@ module.exports = {
       req.sessionName = req.cookies.sessionName;
       next();
     }
+  },
+  getTools(req, res) {
+    res.setHeader('Cache-Control', 'public max-age=36000');
+    res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('Content-Length', tools.length);
+    res.status(200).send(tools);
   }
 };
