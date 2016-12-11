@@ -21,7 +21,7 @@ class Editor {
     this.loaders = await getRequest('/api/loaders');
   }
 
-  @action setErrorMessage = (message) => this.errorMessage = message;
+  @action setErrorMessage = message => this.errorMessage = message;
   @action openSandboxModal = () => this.sandboxSettingsModalOpen = true;
   @action closeSandboxModal = () => this.sandboxSettingsModalOpen = false;
   @action closeModal = () => this.addFileModalOpen = false;
