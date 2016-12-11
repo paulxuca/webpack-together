@@ -42,7 +42,7 @@ const NetworkStatusBar = styled.default.div`
   }
 `;
 
-@inject('store') @observer
+@observer
 export default class NetworkStatus extends Component {
   renderMessage() {
     if (!this.props.online) {

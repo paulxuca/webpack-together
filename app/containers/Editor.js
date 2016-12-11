@@ -47,6 +47,9 @@ export default class Editor extends Component {
   render() {
     const {
       files,
+      changeSelectedFileIndex,
+      deleteFileToFirebase,
+
       currentFileIndex,
       writeToFirebase,
       newFiletoFirebase,
@@ -71,7 +74,15 @@ export default class Editor extends Component {
     return (
       <EditorMain>
         <NetworkStatus online={onlineStatus} />
-        <FileSelector />
+        <FileSelector
+          files={files}
+          currentIndex={currentFileIndex}
+          changeIndex={changeSelectedFileIndex}
+          deleteFromFirebase={deleteFileToFirebase}
+          openCreateModal={openModal}
+          openSandboxModal={openSandboxModal}
+          isOnline={onlineStatus}
+        />
         <CreateFileModal
           openModal={addFileModalOpen}
           closeModalFn={closeModal}

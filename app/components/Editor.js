@@ -40,3 +40,9 @@ export const EditorEntryFilePrompt = styled.default.div`
     padding: 20px;
   }
 `;
+
+export const Editor = styled.default.div`
+  display: block;
+  flex: 1;
+  position: relative;
+`;

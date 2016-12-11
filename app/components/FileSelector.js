@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import Icon from './Common/Icon';
 
@@ -52,7 +52,7 @@ const NewFileSection = styled.default.div`
   background-color: #DFE1E8;
 `;
 
-const NewFileButton = styled.default.button`
+const FileButton = styled.default.button`
   flex: 1;
   font-family: Avenir;
   padding-bottom: 0px;
@@ -62,6 +62,9 @@ const NewFileButton = styled.default.button`
     >span {
       display: none;
     }
+  }
+  &:disabled {
+    color: #C2C2C2;
   }
   &:focus {
     outline: 0;
@@ -88,18 +91,18 @@ const DeleteButton = styled.default.button`
   padding: 0;
 `;
 
-@inject('store') @observer
+@observer
 export default class FileSelector extends Component {
   render() {
     const {
       files,
-      fileState,
-      changeSelectedFileIndex,
-      currentFileIndex,
-      filesChanged,
-      deleteFileToFirebase,
-    } = this.props.store.app;
-    const { openModal, openSandboxModal } = this.props.store.editor;
+      changeIndex,
+      deleteFromFirebase,
+      openCreateModal,
+      openSandboxModal,
+      currentIndex,
+      isOnline,
+    } = this.props;
 
     return (
       <FileSelectorBar>
@@ -107,12 +110,12 @@ export default class FileSelector extends Component {
           {files && files.map((each, index) =>
             <FileSelectorItem
               key={`file_${index}`}
-              isSelected={currentFileIndex === index}
+              isSelected={currentIndex === index}
             >
-                <span onClick={(e) => changeSelectedFileIndex(index)}>{each.name}</span>
+                <span onClick={(e) => changeIndex(index)}>{each.name}</span>
                 <SavedIndicator isSaved={!files[index].isEdited} />
                 <DeleteButton
-                  onClick={() => deleteFileToFirebase(index)}
+                  onClick={() => deleteFromFirebase(index)}
                 >
                   <Icon
                     type="close"
@@ -126,8 +129,9 @@ export default class FileSelector extends Component {
           )}
         </FileSelectorList>
           <NewFileSection>
-            <NewFileButton
-              onClick={() => openModal()}
+            <FileButton
+              onClick={() => openCreateModal()}
+              disabled={!isOnline}
             >
               <Icon
                 type="file"
@@ -135,9 +139,10 @@ export default class FileSelector extends Component {
                 size={10}
               />
               <span>New File</span>
-            </NewFileButton>
-            <NewFileButton
+            </FileButton>
+            <FileButton
               onClick={() => openSandboxModal()}
+              disabled={!isOnline}
             >
               <Icon
                 type="settings"
@@ -145,7 +150,7 @@ export default class FileSelector extends Component {
                 size={10}
               />
               <span>Sandbox Settings</span>
-          </NewFileButton>
+          </FileButton>
         </NewFileSection>
       </FileSelectorBar>
     );

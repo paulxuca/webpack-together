@@ -7,13 +7,12 @@ import styled from 'styled-components';
 import ace from 'brace';
 import { observer, inject } from 'mobx-react';
 import { getMode } from '../utils/editor';
-import { EditorComponentPane, EditorEntryFilePrompt } from './Editor';
+import {
+  Editor,
+  EditorComponentPane,
+  EditorEntryFilePrompt
+} from './Editor';
 
-const Editor = styled.default.div`
-  display: block;
-  flex: 1;
-  position: relative;
-`;
 
 const initalState = {
   cursor: {

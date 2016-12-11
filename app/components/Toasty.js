@@ -1,25 +1,10 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import styled, { keyframes } from 'styled-components';
+import { getEffect } from '../utils/style';
 
-const popIn = keyframes`
-  from { 
-    transform: translatey(100px);
-  }
-
-  to {
-    transform: translatey(0px);
-  }
-`;
-
-const popOut = keyframes`
-  from {
-    transform: translatey(0px);
-  }
-  to {
-    transform: translatey(100px);
-  }
-`;
+const popIn = getEffect('transform: translatey(100px)', 'transform: translatey(0px)');
+const popOut = getEffect('transform: translatey(0px)', 'transform: translatey(100px)')
 
 const ToastElement = styled.default.div`
   position: fixed;
