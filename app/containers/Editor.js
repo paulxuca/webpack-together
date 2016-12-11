@@ -69,6 +69,8 @@ export default class Editor extends Component {
       sandboxSettingsModalOpen,
       errorMessage,
       setErrorMessage,
+
+      getLoaderOptions,
     } = this.props.store.editor;
 
     return (
@@ -92,6 +94,7 @@ export default class Editor extends Component {
         <SandboxSettingsModal
           openModal={sandboxSettingsModalOpen}
           closeModalFn={closeSandboxModal}
+          reqLoaderOptions={getLoaderOptions}
         />
         { files && <EditorWindow>
           <EditorComponent

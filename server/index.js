@@ -2,6 +2,7 @@ const app = require('./app').app;
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const firebase = require('./firebase');
 const config = require('./config');
@@ -19,7 +20,7 @@ const webpackConfig = require('../webpack/webpack.dev.config');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-
+app.use(cors());
 
 if (!utils.isProduction()) {
   const compiler = webpack(webpackConfig);
@@ -39,6 +40,8 @@ app.use(/\/api\/(sandbox|session)/, routes.sandboxMiddleware);
 app.use('/api/session', routes.intentMiddleware);
 
 app.post('/api/session', routes.update);
+
+app.get('/api/loaders', routes.loaderOptions);
 app.get('/api/sandbox', sandbox.getIndex);
 app.get('/api/sandbox/tools.js', sandbox.getTools);
 app.get('/api/vendor/:vendorHash', vendor.getVendorFile);

@@ -14,6 +14,7 @@ const popIn = keyframes`
 
 const ModalOverlay = styled.default.div`
   width: 100%;
+  font-family: Avenir;
   height: 100%;
   position: absolute;
   display: ${props => props.open ? 'flex' : 'none' };
@@ -67,11 +68,14 @@ export default class Modal extends Component {
   }
 
   render() {
-    const { children, openModal, width } = this.props;
+    const { children, openModal, width, style } = this.props;
 
     return (
       <ModalOverlay open={openModal}>
-        <ModalContainer width={width} innerRef={(modal) => { this.modal = modal; }}>
+        <ModalContainer
+          width={width}
+          innerRef={(modal) => { this.modal = modal; }}
+        >
           {children}
         </ModalContainer>
       </ModalOverlay>

@@ -47,7 +47,6 @@ const PreviewButton = styled.default.button`
 `;
 
 const ErrorMessage = styled.default.div`
-  height: 60px;
   width: 100%;
   background-color: #C4534F;
   color: white;
@@ -57,6 +56,15 @@ const ErrorMessage = styled.default.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  div {
+    width: 100%;
+    position: relative;
+    flex: 1;
+  }
+  p {
+    width: 100%;
+    padding: 10px 20px;
+  }
 `;
 
 @observer
@@ -96,7 +104,9 @@ export default class Preview extends Component {
           }</PreviewButton>
         </PreviewWindowControls>
         {this.props.error && <ErrorMessage>
-          {this.props.error}
+          <div>
+            <p>{this.props.error}</p>
+          </div>
         </ErrorMessage>}
       </PreviewWindow>
     );

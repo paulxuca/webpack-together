@@ -1,4 +1,5 @@
 import { observable, action } from 'mobx';
+import { getRequest } from '../utils/request';
 
 class Editor {
   @observable addFileModalOpen = false;
@@ -8,6 +9,10 @@ class Editor {
 
   @action onlineListener = (e) => {
     this.onlineStatus = navigator.onLine;
+  }
+
+  @action getLoaderOptions = async () => {
+    this.loaders = await getRequest('/api/loaders').data;
   }
 
   @action setErrorMessage = (message) => this.errorMessage = message;

@@ -5,7 +5,9 @@ const bundle = require('./bundle');
 const sessions = require('./sessions');
 const vendor = require('./vendor');
 const intentEnum = require('./intent_enum');
+const boilerplates = require('./boilerplates');
 
+const mergeSessionData = (sessionConfig, sessionName) => Object.assign({}, sessionConfig, { sessionName });
 const handleError = (error, res) => {
   console.log(error);
   res.status(400).json(error);
@@ -13,31 +15,29 @@ const handleError = (error, res) => {
 
 const intentMiddleware = async (req, res, next) => {
   const { sessionName } = req.cookies;
-  switch (req.body.intent) {
-    case intentEnum.ADD_FILE:
-      const { fileName, isEntry } = req.body;
-      await firebase.createFile(fileName, isEntry, sessionName);
-      next();
-    case intentEnum.REMOVE_FILE:
-      const { fileHash } = req.body;
-      await firebase.deleteFile(fileHash, sessionName);
-      next();
-    default:
-      next();
+  if (req.body.intent === intentEnum.ADD_FILE) {
+    const { fileName, isEntry } = req.body;
+    await firebase.createFile(fileName, isEntry, sessionName);
+  } else {
+    const { fileHash } = req.body;
+    await firebase.deleteFile(fileHash, sessionName);
   }
+  next();
 };
 
 const sandboxMiddleware = async (req, res, next) => {
-  if (sessions.hasBundle(req.cookies.sessionName)) {
+  if (req.cookies.sessionName) {
     req.sessionName = req.cookies.sessionName;
     next();
   } else {
-    req.sessionName = await firebase.createSession();
-    next();
+    try {
+      req.sessionName = await firebase.createSession();
+      next();
+    } catch (err) {
+      handleError(err, res);
+    }
   }
 };
-
-const mergeSessionData = (sessionConfig, sessionName) => Object.assign({}, sessionConfig, { sessionName });
 
 const update = async (req, res) => {
   const { sessionName } = req;
@@ -60,11 +60,17 @@ const update = async (req, res) => {
   } catch (error) {
     handleError(error, res);
   }
+};
+
+const loaderOptions = (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600000');
+  res.status(200).json(boilerplates.getLoadersOptions());
 }
 
 module.exports = {
   update,
   intentMiddleware,
   sandboxMiddleware,
+  loaderOptions,
 };
 

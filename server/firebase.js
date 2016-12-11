@@ -27,28 +27,33 @@ const getConfig = async sessionName => {
   return { webpack, entryFile, packages };
 }
 
-const createSession = (id = 0) => new Promise((resolve) => {
-  const sessionName = uuid();
-  const firebaseRef = getSessionRef(sessionName);
-  const boilerplate = boilerplates.getBoilerplate(id);
-  firebaseRef.set({
-    lastEdited: Date.now(),
-    entryFile: boilerplate.entry,
-    webpack: boilerplate.webpack,
-    packages: boilerplate.packages,
-    isCompiling: true,
-  });
-  const firebaseChildRef = firebaseRef.child('files');
-  boilerplate.files.forEach((file) => {
-    firebaseChildRef
-      .push()
-      .set({
-        name: file.name,
-        content: file.content,
-        isEdited: false,
-      });
-  });
-  resolve(sessionName);
+const createSession = (id = 0) => new Promise((resolve, reject) => {
+  try {
+    const sessionName = uuid();
+    const firebaseRef = getSessionRef(sessionName);
+    const boilerplate = boilerplates.getBoilerplate(id);
+    firebaseRef.set({
+      lastEdited: Date.now(),
+      entryFile: boilerplate.entry,
+      webpack: boilerplate.webpack,
+      packages: boilerplate.packages,
+      isCompiling: true,
+    });
+    const firebaseChildRef = firebaseRef.child('files');
+    boilerplate.files.forEach((file) => {
+      firebaseChildRef
+        .push()
+        .set({
+          name: file.name,
+          content: file.content,
+          isEdited: false,
+        });
+    });
+    resolve(sessionName);
+    
+  } catch (error) {
+    reject(error);
+  }
 });
 
 const createFile = (fileName, isEntry, sessionName) => new Promise(async (resolve) => {

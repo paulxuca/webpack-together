@@ -10,3 +10,7 @@
 .ace_scroller {
   left: 48px !important;
 }
+
+.ace_editor {
+  font-size: 12.5px !important;
+}

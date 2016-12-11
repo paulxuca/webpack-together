@@ -9,8 +9,8 @@ const fileNameFolder = (fileName, sessionName) => path.resolve(getSessionFileFol
 const injectScriptTag = (fileContents, vendorHash, sessionName) => {
   return fileContents.replace('</body>',
   `<script src=${config.getToolsUrl()}></script>
-  <script src=${config.getVendorUrl(vendorHash)}></script>
-  <script src=${config.getWebpackUrl(sessionName)}></script>
+  <script src=${config.getVendorUrl(vendorHash)} crossorigin="anonymous"></script>
+  <script src=${config.getWebpackUrl(sessionName)} crossorigin="anonymous"></script>
   </body>`);
 };
 
