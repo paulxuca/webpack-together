@@ -12,27 +12,24 @@ const handleError = (error, res) => {
 }
 
 const intentMiddleware = async (req, res, next) => {
-  if (req.body && req.body.intent) {
-    switch (req.body.intent) {
-      case intentEnum.ADD_FILE:
-        const { fileName, isEntry } = req.body;
-        await firebase.createFile(fileName, isEntry, req.sessionName);
-        next();
-      case intentEnum.REMOVE_FILE:
-        const { fileHash } = req.body;
-        await firebase.deleteFile(fileHash, req.sessionName);
-        next();
-      default:
-        next();
-    }
+  const { sessionName } = req.cookies;
+  switch (req.body.intent) {
+    case intentEnum.ADD_FILE:
+      const { fileName, isEntry } = req.body;
+      await firebase.createFile(fileName, isEntry, sessionName);
+      next();
+    case intentEnum.REMOVE_FILE:
+      const { fileHash } = req.body;
+      await firebase.deleteFile(fileHash, sessionName);
+      next();
+    default:
+      next();
   }
-  next();
-}
+};
 
 const sandboxMiddleware = async (req, res, next) => {
   if (sessions.hasBundle(req.cookies.sessionName)) {
     req.sessionName = req.cookies.sessionName;
-    firebase.setCompiling(req.cookies.sessionName);
     next();
   } else {
     req.sessionName = await firebase.createSession();
@@ -44,6 +41,7 @@ const mergeSessionData = (sessionConfig, sessionName) => Object.assign({}, sessi
 
 const update = async (req, res) => {
   const { sessionName } = req;
+  firebase.setCompiling(sessionName);
 
   try {
     const sessionConfig = await firebase.getConfig(sessionName);

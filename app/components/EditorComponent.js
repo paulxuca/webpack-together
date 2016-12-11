@@ -62,6 +62,7 @@ export default class EditorComponent extends Component {
       }
 
       if (nextProps.fileIndex !== this.props.fileIndex) {
+        
         getMode(nextFile.name, this.editor);
       } else {
         this.editor.moveCursorTo(this.state.cursor.row, this.state.cursor.column);

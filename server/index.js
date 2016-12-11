@@ -36,7 +36,7 @@ if (!utils.isProduction()) {
 }
 
 app.use(/\/api\/(sandbox|session)/, routes.sandboxMiddleware);
-app.use('api/session', routes.intentMiddleware);
+app.use('/api/session', routes.intentMiddleware);
 
 app.post('/api/session', routes.update);
 app.get('/api/sandbox', sandbox.getIndex);

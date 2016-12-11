@@ -22,8 +22,6 @@ class EmitHandler {
 module.exports = {
   addSession: (sessionName, config, handler) => new Promise((resolve) => {
     const compiler = webpack(config);
-    
-    console.log(handler);
     const dev = devMiddleware(compiler, {
       publicPath: config.output.publicPath,
       stats: {

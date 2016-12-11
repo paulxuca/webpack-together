@@ -19,6 +19,6 @@ export const getMode = (fileName, aceInstance) => require.ensure([], () => {
   } else if (mode === MODE_MAP.less) {
     require('brace/mode/less');
   }
-  aceInstance.getSession().setMode(`ace/mode/${mode}`);
+  aceInstance && aceInstance.getSession().setMode(`ace/mode/${mode}`);
 });
 
