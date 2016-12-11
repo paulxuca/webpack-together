@@ -3,6 +3,9 @@ import { observer } from 'mobx-react';
 import Modal from './Common/Modal';
 import styled from 'styled-components';
 
+import Loaders from './Loaders';
+
+
 const ModalContainer = styled.default.div`
   min-height: 400px;
   display: flex;
@@ -20,8 +23,15 @@ const ModalSection = styled.default.div`
 
 @observer
 export default class SandboxSettingsModal extends React.Component {
-  componentDidMount() {
-    this.props.reqLoaderOptions();
+  renderLoaderList() {
+    if (this.props.loaders) {
+      return (
+        <Loaders
+          loaderList={this.props.loaders}
+        />
+      )
+    }
+    return null;
   }
   
   render() {
@@ -37,6 +47,7 @@ export default class SandboxSettingsModal extends React.Component {
           </ModalSection>
           <ModalSection>
             <h2>Loaders</h2>
+            {this.renderLoaderList()}
           </ModalSection>
         </ModalContainer>
       </Modal>

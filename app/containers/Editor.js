@@ -22,6 +22,8 @@ export default class Editor extends Component {
   }
 
   componentDidMount() {
+    this.props.store.editor.getLoaderOptions();
+
     window.addEventListener('message', this.handleIframeMessage);
     window.addEventListener('keydown', this.handleSaveShortcut);
   }
@@ -70,7 +72,7 @@ export default class Editor extends Component {
       errorMessage,
       setErrorMessage,
 
-      getLoaderOptions,
+      loaders,
     } = this.props.store.editor;
 
     return (
@@ -94,7 +96,7 @@ export default class Editor extends Component {
         <SandboxSettingsModal
           openModal={sandboxSettingsModalOpen}
           closeModalFn={closeSandboxModal}
-          reqLoaderOptions={getLoaderOptions}
+          loaders={loaders}
         />
         { files && <EditorWindow>
           <EditorComponent

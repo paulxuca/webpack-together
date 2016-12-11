@@ -18,12 +18,18 @@ class App {
   @observable sessionName;
   @observable firebaseRef;
   @observable files;
-  @observable currentFileIndex = 0;
-  @observable filesKey = [];
+  @observable currentFileIndex;
+  @observable filesKey;
   @observable entryFileName;
   @observable isCompiling;
   @observable toastMessage;
-  @observable canChangeIndex = true;
+  @observable canChangeIndex;
+
+  constructor() {
+    this.currentFileIndex = 0;
+    this.filesKey = [];
+    this.canChangeIndex = true;
+  }
 
   @action getSession = async () => {
     try {

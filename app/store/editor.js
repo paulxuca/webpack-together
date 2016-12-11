@@ -2,17 +2,23 @@ import { observable, action } from 'mobx';
 import { getRequest } from '../utils/request';
 
 class Editor {
-  @observable addFileModalOpen = false;
-  @observable sandboxSettingsModalOpen = false;
-  @observable onlineStatus = navigator.onLine;
+  @observable addFileModalOpen;
+  @observable sandboxSettingsModalOpen;
+  @observable onlineStatus;
   @observable errorMessage;
+
+  constructor() {
+    this.addFileModalOpen = false;
+    this.sandboxSettingsModalOpen = false;
+    this.onlineStatus = navigator.onLine;
+  }
 
   @action onlineListener = (e) => {
     this.onlineStatus = navigator.onLine;
   }
 
   @action getLoaderOptions = async () => {
-    this.loaders = await getRequest('/api/loaders').data;
+    this.loaders = await getRequest('/api/loaders');
   }
 
   @action setErrorMessage = (message) => this.errorMessage = message;
