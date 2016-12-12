@@ -5,7 +5,7 @@ export const MODE_MAP = {
   tsx: 'typescript',
   coffee: 'cofeescript',
   less: 'less',
-  scss: 'sass',
+  scss: 'scss',
   html: 'html',
   vue: 'html',
   json: 'json',

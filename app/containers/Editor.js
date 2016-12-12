@@ -19,6 +19,7 @@ export default class Editor extends Component {
     }
     this.handleIframeMessage = this.handleIframeMessage.bind(this);
     this.handleSaveShortcut = this.handleSaveShortcut.bind(this);
+    this.handleSandboxSettingsModalUnmount = this.handleSandboxSettingsModalUnmount.bind(this);
   }
 
   componentDidMount() {
@@ -46,6 +47,10 @@ export default class Editor extends Component {
     }
   }
 
+  handleSandboxSettingsModalUnmount(activeLoaders) {
+    this.props.store.app.changeLoaders(activeLoaders);
+  }
+
   render() {
     const {
       files,
@@ -69,7 +74,7 @@ export default class Editor extends Component {
         <NetworkStatus online={onlineStatus} />
         <FileSelector />
         <CreateFileModal />
-        <SandboxSettingsModal />
+        <SandboxSettingsModal handleClose={this.handleSandboxSettingsModalUnmount}/>
         { files && <EditorWindow>
           <EditorComponent
             files={files}

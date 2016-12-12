@@ -46,6 +46,10 @@ export default class Loaders extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.props.onUnmount(this.state.activeLoaders);
+  }
+
   render() {
     const { loaderList: { loaders } } = this.props;
     return (

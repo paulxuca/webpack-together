@@ -13,4 +13,12 @@ export const updateToFirebase = (firebaseRef, fileIndex, fileValue) => {
     });
 };
 
+export const changeSessionLoaders = (firebaseRef, newLoaders) => {
+  firebaseRef
+    .child('webpack')
+    .update({
+      loaders: newLoaders,
+    });
+};
+
 export const updateSessionData = firebaseRef => firebaseRef.update({ lastEdited: Date.now() });

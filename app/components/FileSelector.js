@@ -94,7 +94,7 @@ const DeleteButton = styled.default.button`
 @inject('store') @observer
 export default class FileSelector extends Component {
   render() {
-    const { files, changeSelectedFileIndex, currentFileIndex, deleteFiletoFirebase } = this.props.store.app;
+    const { files, changeSelectedFileIndex, currentFileIndex, deleteFileToFirebase } = this.props.store.app;
     const { onlineStatus } = this.props.store.editor;
     const { openFileModal, openSandboxModal } = this.props.store.ui;
 
@@ -109,7 +109,7 @@ export default class FileSelector extends Component {
                 <span onClick={(e) => changeSelectedFileIndex(index)}>{each.name}</span>
                 <SavedIndicator isSaved={!files[index].isEdited} />
                 <DeleteButton
-                  onClick={() => deleteFiletoFirebase(index)}
+                  onClick={() => deleteFileToFirebase(index)}
                 >
                   <Icon
                     type="close"

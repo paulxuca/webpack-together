@@ -10,6 +10,7 @@ import {
   getRefByName,
   updateToFirebase,
   updateSessionData,
+  changeSessionLoaders,
 } from '../utils/firebase';
 
 const delay = (timeout) => new Promise(resolve => setTimeout(() => resolve(), timeout));
@@ -98,6 +99,10 @@ class App {
     if (needsSave(this.files) && !this.isCompiling) {
       saveAllAndAttemptCompiler(this.sessionName);
     }
+  }
+
+  @action changeLoaders = (newLoaders) => {
+    changeSessionLoaders(this.firebaseRef, newLoaders);
   }
 
   @action fileExists = (name) => {

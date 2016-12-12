@@ -36,8 +36,30 @@ module.exports = {
         test: /\.css?$/,
         loader: 'style-loader!css-loader',
       };
+
+      if (arrayContains(loaders, 'cssmodules')) {
+        cssLoader.loader = 'style!css?modules&localIdentName=[name]---[local]---[hash:base64:5]';
+      }
+
       finalLoaders.push(cssLoader);
     }
+
+    if (arrayContains(loaders, 'sass')) {
+      const sassLoader = {
+        test: /\.scss?$/,
+        loader: 'style-loader!css-loader!sass-loader',
+      };
+      finalLoaders.push(sassLoader);
+    }
+
+    if (arrayContains(loaders, 'less')) {
+      const lessLoader = {
+        test: /\.less?$/,
+        loader: 'style-loader!css-loader!less-loader',
+      };
+      finalLoaders.push(lessLoader);
+    }
+
     return finalLoaders;
   },
 };

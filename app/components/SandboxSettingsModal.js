@@ -26,17 +26,19 @@ export default class SandboxSettingsModal extends React.Component {
   renderLoaderList() {
     let activeLoaders;
     const { webpackConfig } = this.props.store.app;
-    const { loaderOptions } = this.props.store.editor;    
+    const { loaderOptions } = this.props.store.editor;
+    const { sandboxSettingsModalOpen } = this.props.store.ui; 
 
     if (webpackConfig) {
       activeLoaders = webpackConfig.loaders;
     }
 
-    if (loaderOptions) {
+    if (loaderOptions && sandboxSettingsModalOpen) {
       return (
         <Loaders
           activeLoaders={activeLoaders}
           loaderList={loaderOptions}
+          onUnmount={this.props.handleClose}
         />
       )
     }
