@@ -49,6 +49,7 @@ export default class Editor extends Component {
 
   handleSandboxSettingsModalUnmount(activeLoaders) {
     this.props.store.app.changeLoaders(activeLoaders);
+    this.props.store.app.saveFirebase(true);
   }
 
   render() {

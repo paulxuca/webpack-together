@@ -50,7 +50,6 @@ const createSession = (id = 0) => new Promise((resolve, reject) => {
         });
     });
     resolve(sessionName);
-    
   } catch (error) {
     reject(error);
   }

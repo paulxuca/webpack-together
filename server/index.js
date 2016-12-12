@@ -11,6 +11,7 @@ const routes = require('./routes');
 const utils = require('./utils');
 const sandbox = require('./sandbox');
 const vendor = require('./vendor');
+const npm = require('./npm');
 
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');

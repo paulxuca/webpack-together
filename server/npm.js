@@ -1,25 +1,27 @@
-const npmi = require('npmi');
 const path = require('path');
+const shell = require('shelljs');
+const fs = require('fs-extra');
 
-const npmiDownload = pkgName => new Promise((resolve, reject) => {
-  npmi({
-    name: pkgName,
-    path: path.resolve(process.cwd(), 'packages'),
-  }, (err, result) => {
-    if (err && (err.code === npmi.LOAD_ERR || err.code === npmi.INSTALL_ERR)) {
-      reject(err);
-    } else {
-      resolve();
-    }
-  });
-});
+const YARN_CMD = 'yarn add';
+const YARN_COMPLETE_CODE = 0;
+const YARN_ERROR_CODE = 1;
+const constructCommandArgs = (packageList) => [].concat(packageList).join(' ');
 
 module.exports = {
-  downloadPackage: pkgName => {
-    return new Promise((resolve, reject) => {
-      npmiDownload(pkgName)
-        .then(() => resolve())
-        .catch((err) => reject(err));
+  installPackages: packageList => new Promise((resolve, reject) => {
+    const currentPackageList = Object.keys(fs.readJsonSync(path.resolve(process.cwd(), 'package.json')).dependencies);
+    const filteredList = packageList.filter(pkg => currentPackageList.indexOf(pkg) === -1);
+    const commandArgs = constructCommandArgs(filteredList);
+    if (!shell.which('yarn')) {
+      shell.echo('Yarn should be installed, this project relies on yarn');
+      shell.exit(1);
+    }
+    shell.exec(`${YARN_CMD} ${commandArgs}`, (code, stdout, stderr) => {
+      if (code === YARN_COMPLETE_CODE) {
+        resolve();
+      } else if (code === YARN_ERROR_CODE) {
+        reject();
+      }
     });
-  },
+  }),
 };

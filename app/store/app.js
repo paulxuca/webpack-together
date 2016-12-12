@@ -18,6 +18,7 @@ const delay = (timeout) => new Promise(resolve => setTimeout(() => resolve(), ti
 class App {
   @observable sessionName;
   @observable webpackConfig;
+  @observable packagesConfig;
   @observable firebaseRef;
   @observable files;
   @observable currentFileIndex;
@@ -58,6 +59,8 @@ class App {
 
     this.entryFileName = currentValue.entryFile;
     this.webpackConfig = currentValue.webpack;
+    this.packagesConfig = currentValue.packages;
+    
     this.files = Object.keys(currentValue.files).map((key) => {
       if (this.filesKey.indexOf(key) === -1) {
         this.filesKey.push(key);
@@ -95,8 +98,8 @@ class App {
     }
   }
 
-  @action saveFirebase = () => {
-    if (needsSave(this.files) && !this.isCompiling) {
+  @action saveFirebase = (override = false) => {
+    if ((needsSave(this.files) && !this.isCompiling) || override) {
       saveAllAndAttemptCompiler(this.sessionName);
     }
   }

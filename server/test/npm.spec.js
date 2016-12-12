@@ -1,14 +1,7 @@
 const npm = require('../npm');
 
 const testDownloadPackage = () => {
-  npm
-    .downloadPackage('react')
-    .then(() => {
-      console.log('Success!');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  npm.installPackages(['react', 'react-dom']);
 };
 
 testDownloadPackage();
