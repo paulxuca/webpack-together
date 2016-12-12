@@ -38,7 +38,7 @@ module.exports = {
       };
 
       if (arrayContains(loaders, 'cssmodules')) {
-        cssLoader.loader = 'style!css?modules&localIdentName=[name]---[local]---[hash:base64:5]';
+        cssLoader.loader = 'style-loader!css-loader?modules&localIdentName=[name]---[local]---[hash:base64:5]';
       }
 
       finalLoaders.push(cssLoader);

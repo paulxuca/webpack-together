@@ -38,6 +38,10 @@
           "description": "Import .scss files to write SASS"
         }
       ]
+    }, {
+      "name": "vue",
+      "key": "vue",
+      "description": "Allows you to write Vue.js 2.0 code"
     }
   ]
 }

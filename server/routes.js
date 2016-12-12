@@ -49,9 +49,18 @@ const update = async (req, res) => {
     const vendorHash = vendor.createVendorName(sessionConfig.packages);
 
     await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
+    
+
+    // Invalidate Clauses here (different loaders, packages)
     if (!vendor.existsVendorBundle(vendorHash)) {
       await vendor.createVendor(vendorHash, sessionConfig.packages);
     }
+    
+    if (sessions.hasBundle(sessionName) && sessions.shouldInvalidate(sessionConfig.webpack, sessionName)) {
+      const { config, loaderConfig } = bundle.createWebpackConfig(sessionName, vendorHash,  sessionConfig.webpack, sessionConfig.entryFile);
+      sessions.updateSession(sessionName, config, loaderConfig);
+    }
+
     if (!sessions.hasBundle(sessionName)) {
       await bundle.updateBundle(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);
     }

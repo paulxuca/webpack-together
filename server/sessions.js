@@ -19,38 +19,75 @@ class EmitHandler {
   }
 }
 
-module.exports = {
-  addSession: (sessionName, config, handler) => new Promise((resolve) => {
-    const compiler = webpack(config);
-    const dev = devMiddleware(compiler, {
-      publicPath: config.output.publicPath,
-      stats: {
-        chunks: false,
-        colors: true,
-      },
-    });
+const getSession = (sessionName) => {
+  return sessions[sessionName];
+};
 
-    sessions[sessionName] = {
-      sessionHandler: new EmitHandler(sessionName, handler),
-      sessionName,
-      dev,
-    };
+const updateSession = (sessionName, config, loaderConfig) => {
+  console.log(`Updating session ${sessionName}`);  
+  sessions[sessionName].loaderConfig = loaderConfig;
 
-    compiler.plugin('done', sessions[sessionName].sessionHandler.handler);
-    
-    app.use(sessions[sessionName].dev);
-    resolve();
-  }),
-  getSession(sessionName) {
-    return sessions[sessionName];
-  },
-  removeSession(sessionName) {
-    delete sessions[sessionName];
-  },
-  hasBundle(sessionName) {
-    return Object.keys(sessions).indexOf(sessionName) !== -1
-  },
-  initializeSessionBundles() {
-    fs.emptyDirSync(path.resolve(process.cwd(), 'sessions'));
+
+  const newCompilerConfig = _.merge(sessions[sessionName].compiler.options, config);
+  sessions[sessionName].compiler.options = newCompilerConfig;
+  //wtf is this, causing me so much pain
+  sessions[sessionName].compiler.options.module.loaders = config.module.loaders;
+  
+  sessions[sessionName].webpackMiddleware.invalidate();
+};
+
+const removeSession = (sessionName) => {
+  console.log(`Removing session ${sessionName}`);
+  sessions[sessionName].webpackMiddleware.close();
+};
+
+const hasBundle = (sessionName) => {
+  return Object.keys(sessions).indexOf(sessionName) !== -1
+};
+
+const initializeSessionBundles = () => {
+  fs.emptyDirSync(path.resolve(process.cwd(), 'sessions'));
+};
+
+const shouldInvalidate = (webpackConfig, sessionName) => {
+  if (sessions[sessionName]
+  && _.difference(webpackConfig.loaders, sessions[sessionName].loaderConfig)) {
+    return true;
   }
+  return false;
+};
+
+module.exports = {
+  addSession: (sessionName, config, handler, loaderConfig) => {
+    return new Promise((resolve) => {
+      const compiler = webpack(config);
+      const sessionHandler = new EmitHandler(sessionName, handler);
+      const webpackMiddleware = devMiddleware(compiler, {
+        publicPath: config.output.publicPath,
+        stats: {
+          chunks: false,
+          colors: true,
+        },
+      });
+
+      sessions[sessionName] = {
+        sessionHandler,
+        sessionName,
+        webpackMiddleware,
+        compiler,
+        loaderConfig,
+      };
+
+      compiler.plugin('done', sessions[sessionName].sessionHandler.handler);
+      
+      app.use(sessions[sessionName].webpackMiddleware);
+      resolve();
+    });
+  },
+  getSession,
+  updateSession,
+  removeSession,
+  hasBundle,
+  initializeSessionBundles,
+  shouldInvalidate,
 };

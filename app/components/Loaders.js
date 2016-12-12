@@ -73,7 +73,7 @@ export default class Loaders extends Component {
           </LoaderText>
           <LoaderText size={14} weight={400}>{loader.description}</LoaderText>
           <LoaderOptions isDisabled={!this.containsLoader(loader.key)}>
-          {loader.options.map((eachSubLoader) => (
+          {loader.options && loader.options.map((eachSubLoader) => (
             <LoaderOptionSection
               key={eachSubLoader.key}
             >
