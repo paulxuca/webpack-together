@@ -2,31 +2,39 @@
   "loaders": [
     {
       "name": "babel",
+      "key": "babel",
       "description": "Use futuristic javascript in your browser today.",
       "options": [
         {
           "name": "stage-0",
+          "key": "stage-0",
           "description": "Latest babel features, today"
         }, {
           "name": "es2015",
+          "key": "es2015",
           "description": "Features according to the ES2015 spec"
         }, {
           "name": "react",
+          "key": "react",
           "description": "React JSX Support"
         }
       ]
     }, {
       "name": "styles",
+      "key": "css",
       "description": "Style your app with CSS, LESS, SASS, CSS Modules and more!",
       "options": [
         {
           "name": "CSS Modules",
+          "key": "cssmodules",
           "description": "Import a css file as a javascript object and access styles through keys"
         }, {
           "name": "Less",
+          "key": "less",
           "description": "Import .less files to write LESS"
         }, {
           "name": "Sass",
+          "key": "sass",
           "description": "Import .scss files to write SASS"
         }
       ]

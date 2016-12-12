@@ -5,7 +5,7 @@ require('brace/theme/tomorrow');
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import ace from 'brace';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { getMode } from '../utils/editor';
 import {
   Editor,

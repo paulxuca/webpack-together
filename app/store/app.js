@@ -16,6 +16,7 @@ const delay = (timeout) => new Promise(resolve => setTimeout(() => resolve(), ti
 
 class App {
   @observable sessionName;
+  @observable webpackConfig;
   @observable firebaseRef;
   @observable files;
   @observable currentFileIndex;
@@ -55,6 +56,7 @@ class App {
     const currentValue = snapshot.val();
 
     this.entryFileName = currentValue.entryFile;
+    this.webpackConfig = currentValue.webpack;
     this.files = Object.keys(currentValue.files).map((key) => {
       if (this.filesKey.indexOf(key) === -1) {
         this.filesKey.push(key);

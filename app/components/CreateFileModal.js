@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import styled from 'styled-components';
 import Modal from './Common/Modal';
 import { getMode } from '../utils/editor';
@@ -55,7 +55,7 @@ const initalState = {
   isEntry: false,
 };
 
-@observer
+@inject('store') @observer
 export default class CreateFileModal extends Component {
   constructor() {
     super();
@@ -66,13 +66,16 @@ export default class CreateFileModal extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    this.props.newFileFn(this.state.fileName, this.state.isEntry);
-    this.props.closeModalFn();
+    const { newFiletoFirebase } = this.props.store.app;
+    const { closeModal } = this.props.store.editor;
+
+    newFiletoFirebase(this.state.fileName, this.state.isEntry);
+    this.props.store.ui.closeFileModal();
     this.setState(initalState);
   }
 
   isButtonDisabled() {
-    if (!this.state.fileName || !getMode(this.state.fileName) || !this.props.fileExists(this.state.fileName)) {
+    if (!this.state.fileName || !getMode(this.state.fileName) || !this.props.store.app.fileExists(this.state.fileName)) {
       return true;
     }
     return false;
@@ -86,10 +89,12 @@ export default class CreateFileModal extends Component {
   }
   
   render() {
+    const { closeFileModal, addFileModalOpen } = this.props.store.ui;
+
     return (
       <Modal
-        closeModalFn={this.props.closeModalFn}
-        openModal={this.props.openModal}
+        closeModalFn={closeFileModal}
+        openModal={addFileModalOpen}
       >
         <ModalContainer>
           <ModalTitle>Add new file</ModalTitle>

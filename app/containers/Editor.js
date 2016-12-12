@@ -35,7 +35,7 @@ export default class Editor extends Component {
 
   handleIframeMessage(e) {
     if (e.data.errorMessage) {
-      this.props.store.editor.setErrorMessage(e.data.errorMessage);  
+      this.props.store.ui.setErrorMessage(e.data.errorMessage);  
     }
   }
 
@@ -49,55 +49,27 @@ export default class Editor extends Component {
   render() {
     const {
       files,
-      changeSelectedFileIndex,
-      deleteFileToFirebase,
-
-      currentFileIndex,
-      writeToFirebase,
-      newFiletoFirebase,
-      entryFileName,
       isCompiling,
-      fileExists,
+      currentFileIndex,
+      entryFileName,
+      writeToFirebase,
     } = this.props.store.app;
 
     const { 
-      addFileModalOpen,
-      closeModal,
-      openModal,
       onlineStatus,
-
-      openSandboxModal,
-      closeSandboxModal,
-      sandboxSettingsModalOpen,
-      errorMessage,
-      setErrorMessage,
-
-      loaders,
     } = this.props.store.editor;
+
+    const {
+      setErrorMessage,
+      errorMessage,
+    } = this.props.store.ui;
 
     return (
       <EditorMain>
         <NetworkStatus online={onlineStatus} />
-        <FileSelector
-          files={files}
-          currentIndex={currentFileIndex}
-          changeIndex={changeSelectedFileIndex}
-          deleteFromFirebase={deleteFileToFirebase}
-          openCreateModal={openModal}
-          openSandboxModal={openSandboxModal}
-          isOnline={onlineStatus}
-        />
-        <CreateFileModal
-          openModal={addFileModalOpen}
-          closeModalFn={closeModal}
-          newFileFn={newFiletoFirebase}
-          fileExists={fileExists}
-        />
-        <SandboxSettingsModal
-          openModal={sandboxSettingsModalOpen}
-          closeModalFn={closeSandboxModal}
-          loaders={loaders}
-        />
+        <FileSelector />
+        <CreateFileModal />
+        <SandboxSettingsModal />
         { files && <EditorWindow>
           <EditorComponent
             files={files}

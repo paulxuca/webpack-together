@@ -30,8 +30,6 @@ module.exports = {
     return new Promise(async (resolve) => {
       if (!fs.existsSync(getSessionFileFolderFromName(sessionName))) {
         fs.mkdirpSync(getSessionFileFolderFromName(sessionName));
-      } else {
-        fs.emptyDirSync(getSessionFileFolderFromName(sessionName));
       }
 
       let fileIter = 0;

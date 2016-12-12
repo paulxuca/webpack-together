@@ -1,5 +1,5 @@
 import React from 'react';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import Modal from './Common/Modal';
 import styled from 'styled-components';
 
@@ -7,27 +7,36 @@ import Loaders from './Loaders';
 
 
 const ModalContainer = styled.default.div`
-  min-height: 400px;
+  height: 400px;
   display: flex;
-  div:first-of-type {
-    border-right: 1px solid #DDD;
-  }
+  position: relative;
 `;
 
 const ModalSection = styled.default.div`
   flex: 1;
+  flex-direction: column;
   max-width: 50%;
   min-width: 50%;
   padding: 15px;
+  display: flex;
 `
 
-@observer
+@inject('store') @observer
 export default class SandboxSettingsModal extends React.Component {
   renderLoaderList() {
-    if (this.props.loaders) {
+    let activeLoaders;
+    const { webpackConfig } = this.props.store.app;
+    const { loaderOptions } = this.props.store.editor;    
+
+    if (webpackConfig) {
+      activeLoaders = webpackConfig.loaders;
+    }
+
+    if (loaderOptions) {
       return (
         <Loaders
-          loaderList={this.props.loaders}
+          activeLoaders={activeLoaders}
+          loaderList={loaderOptions}
         />
       )
     }
@@ -35,14 +44,17 @@ export default class SandboxSettingsModal extends React.Component {
   }
   
   render() {
+    const { closeSandboxModal, sandboxSettingsModalOpen } = this.props.store.ui;
+    
+
     return (
       <Modal
-        closeModalFn={this.props.closeModalFn}
-        openModal={this.props.openModal}
+        closeModalFn={closeSandboxModal}
+        openModal={sandboxSettingsModalOpen}
         width={1000}
       >
         <ModalContainer>
-          <ModalSection>
+          <ModalSection style={{ borderRight: '1px solid #DDD'}}>
 
           </ModalSection>
           <ModalSection>
