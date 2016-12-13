@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action } from 'mobx';
 import {
   getSession,
   saveAllAndAttemptCompiler,
@@ -11,9 +11,27 @@ import {
   updateToFirebase,
   updateSessionData,
   changeSessionLoaders,
+  changeSessionPackages,
 } from '../utils/firebase';
 
 const delay = (timeout) => new Promise(resolve => setTimeout(() => resolve(), timeout));
+
+const debounce = (func, wait, immediate) => {
+	let timeout;
+	return function() {
+		let context = this;
+    let args = arguments;
+		const later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		const callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
 
 class App {
   @observable sessionName;
@@ -32,6 +50,7 @@ class App {
     this.currentFileIndex = 0;
     this.filesKey = [];
     this.canChangeIndex = true;
+    this.saveFirebase = debounce(this.saveFirebase, 300);
   }
 
   @action getSession = async () => {
@@ -60,7 +79,7 @@ class App {
     this.entryFileName = currentValue.entryFile;
     this.webpackConfig = currentValue.webpack;
     this.packagesConfig = currentValue.packages;
-    
+
     this.files = Object.keys(currentValue.files).map((key) => {
       if (this.filesKey.indexOf(key) === -1) {
         this.filesKey.push(key);
@@ -106,6 +125,12 @@ class App {
 
   @action changeLoaders = (newLoaders) => {
     changeSessionLoaders(this.firebaseRef, newLoaders);
+    this.saveFirebase(true);
+  }
+
+  @action changePackages = (newPackages) => {
+    changeSessionPackages(this.firebaseRef, newPackages);
+    this.saveFirebase(true);
   }
 
   @action fileExists = (name) => {

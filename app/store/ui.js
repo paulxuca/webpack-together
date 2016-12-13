@@ -7,10 +7,13 @@ class UI {
   @observable sandboxSettingsModalOpen;
   @observable errorMessage;
   @observable packageList;
+  @observable logMessages;
+  @observable newLogs;
 
   constructor() {
     this.addFileModalOpen = false;
     this.sandboxSettingsModalOpen = false;
+    this.newLogs = false;
   }
 
   @action getPackagesList = async (query) => {
@@ -23,6 +26,11 @@ class UI {
   @action openFileModal = () => this.addFileModalOpen = true;
   
   @action setErrorMessage = message => this.errorMessage = message;
+  @action appendLogMessage = message => {
+    this.logMessages.push(message);
+    this.newLogs = true;
+  }
+  @action viewedLogs = () => this.newLogs = false;
 }
 
 export default new UI();

@@ -12,7 +12,7 @@ const getPublicPath = sessionName =>  path.join('/', 'api', 'sandbox', sessionNa
 
 const createWebpackConfig = (sessionName, vendorHash, webpackConfig, entryFile) => {
   const loaderConfig = loaders.createLoaders(webpackConfig.loaders);
-  const vendorManifest = JSON.parse(fs.fs.readFileSync(path.join(vendor.getPathForVendor(vendorHash), 'manifest.json')).toString());
+  const vendorManifest = vendor.getVendorManifest(vendorHash);
   
   return {
     loaderConfig: webpackConfig.loaders,
@@ -47,7 +47,13 @@ module.exports = {
       const { config, loaderConfig } = createWebpackConfig(sessionName, vendorHash, webpackConfig, entryFile);
 
       sessions
-        .addSession(sessionName, config, hasCompiledFnFirebase, loaderConfig)
+        .addSession(
+          sessionName,
+          config,
+          hasCompiledFnFirebase,
+          loaderConfig,
+          vendorHash
+        )
         .then(() => resolve());
     });
   },

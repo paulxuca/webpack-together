@@ -39,7 +39,7 @@ export default class SandboxSettingsModal extends React.Component {
         <Loaders
           activeLoaders={activeLoaders}
           loaderList={loaderOptions}
-          onUnmount={this.props.handleClose}
+          onUnmount={this.props.handleLoaderClose}
         />
       )
     }
@@ -53,14 +53,19 @@ export default class SandboxSettingsModal extends React.Component {
     } = this.props.store.ui;
 
     const { packagesConfig } = this.props.store.app;
-
-    return (
-      <Npm
-        npmList={packageList}
-        queryNpm={getPackagesList}
-        activePackages={packagesConfig.map(e => e.name)}
-      />
-    );
+    const { sandboxSettingsModalOpen } = this.props.store.ui;
+    
+    if (packagesConfig && sandboxSettingsModalOpen) {
+      return (
+        <Npm
+          npmList={packageList}
+          queryNpm={getPackagesList}
+          onUnmount={this.props.handlePackageClose}
+          activePackages={packagesConfig && packagesConfig.map(e => e.name)}
+        />
+      );
+    }
+    return null;
   }
   
   render() {

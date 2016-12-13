@@ -19,7 +19,8 @@ export default class Editor extends Component {
     }
     this.handleIframeMessage = this.handleIframeMessage.bind(this);
     this.handleSaveShortcut = this.handleSaveShortcut.bind(this);
-    this.handleSandboxSettingsModalUnmount = this.handleSandboxSettingsModalUnmount.bind(this);
+    this.handleLoaderUnmount = this.handleLoaderUnmount.bind(this);
+    this.handlePackagesUnmount = this.handlePackagesUnmount.bind(this);
   }
 
   componentDidMount() {
@@ -35,8 +36,10 @@ export default class Editor extends Component {
   }
 
   handleIframeMessage(e) {
-    if (e.data.errorMessage) {
+    if (e.data.type === 'error') {
       this.props.store.ui.setErrorMessage(e.data.errorMessage);  
+    } else if (e.data.type === 'log') {
+      
     }
   }
 
@@ -47,9 +50,12 @@ export default class Editor extends Component {
     }
   }
 
-  handleSandboxSettingsModalUnmount(activeLoaders) {
-    this.props.store.app.changeLoaders(activeLoaders);
-    this.props.store.app.saveFirebase(true);
+  handleLoaderUnmount(newActiveLoaders) {
+    this.props.store.app.changeLoaders(newActiveLoaders);
+  }
+
+  handlePackagesUnmount(newActivePacakages) {
+    this.props.store.app.changePackages(newActivePacakages);
   }
 
   render() {
@@ -75,7 +81,10 @@ export default class Editor extends Component {
         <NetworkStatus online={onlineStatus} />
         <FileSelector />
         <CreateFileModal />
-        <SandboxSettingsModal handleClose={this.handleSandboxSettingsModalUnmount}/>
+        <SandboxSettingsModal
+          handleLoaderClose={this.handleLoaderUnmount}
+          handlePackageClose={this.handlePackagesUnmount}
+        />
         { files && <EditorWindow>
           <EditorComponent
             files={files}

@@ -1,20 +1,30 @@
 const hash = require('string-hash');
 const webpack = require('webpack');
 const fs = require('./filesystem');
+const npm = require('./npm');
 const path = require('path');
 
 const getPathForVendor = (vendorHash) => path.resolve(process.cwd(), 'vendor', vendorHash);
 const getPathForVendorFile = vendorHash => path.resolve(process.cwd(), 'vendor', vendorHash, 'dll.vendor.js');
 const vendorHashRegex = new RegExp(/vendor_(.+).js/);
+const vendorHashCache = {}; // In memory cache for vendor hashes
 
 module.exports = {
   getPathForVendor,
   createVendorName: (packages) => {
     if (!packages) return null;
-    return hash(JSON.stringify(packages.reduce((all, ea) => {
+    const vendorListString = JSON.stringify(packages);
+    if (vendorHashCache[vendorListString]) {
+      return vendorHashCache[vendorListString];
+    }
+
+    const vendorHash = hash(JSON.stringify(packages.reduce((all, ea) => {
       return all + ea.name;
     }, ''))).toString();
+    vendorHashCache[vendorListString] = vendorHash;
+    return vendorHash;
   },
+  getVendorManifest:(vendorHash) => JSON.parse(fs.fs.readFileSync(path.join(getPathForVendor(vendorHash), 'manifest.json')).toString()),
   initializeVendorFolder() {
     fs.fs.emptyDirSync(path.resolve(process.cwd(), 'vendor'));
   },
@@ -64,6 +74,15 @@ module.exports = {
   existsVendorBundle(vendorHash) {
     return fs.fs.existsSync(getPathForVendor(vendorHash));
   },
+  ensurePackages: (packageConfig) => new Promise(async (resolve, reject) => {
+    const packageList = packageConfig.map(e => e.name);
+    try {
+      await npm.installPackages(packageList);
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  }),
   getVendorFile(req, res) {
     const vHash = req.params.vendorHash.match(vendorHashRegex)[1];
     if (fs.fs.existsSync(getPathForVendorFile(vHash))) {

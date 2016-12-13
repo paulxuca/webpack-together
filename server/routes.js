@@ -53,12 +53,22 @@ const update = async (req, res) => {
 
     // Invalidate Clauses here (different loaders, packages)
     if (!vendor.existsVendorBundle(vendorHash)) {
+      await vendor.ensurePackages(sessionConfig.packages);
       await vendor.createVendor(vendorHash, sessionConfig.packages);
     }
     
-    if (sessions.hasBundle(sessionName) && sessions.shouldInvalidate(sessionConfig.webpack, sessionName)) {
-      const { config, loaderConfig } = bundle.createWebpackConfig(sessionName, vendorHash,  sessionConfig.webpack, sessionConfig.entryFile);
-      sessions.updateSession(sessionName, config, loaderConfig);
+    const hasBundle = sessions.hasBundle(sessionName);
+    let invalidatingLoaders;
+    let invalidatingPackages;
+
+    if (hasBundle) {
+      invalidatingLoaders = sessions.shouldInvalidateLoaders(sessionConfig.webpack, sessionName);
+      invalidatingPackages = sessions.shouldInvalidatePackages(vendorHash, sessionName);
+
+      if (invalidatingLoaders || invalidatingPackages) {
+        const { config, loaderConfig } = bundle.createWebpackConfig(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);
+        sessions.updateSession(sessionName, config, loaderConfig, vendorHash, invalidatingLoaders, invalidatingPackages);
+      }
     }
 
     if (!sessions.hasBundle(sessionName)) {

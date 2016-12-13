@@ -48,13 +48,14 @@ const NpmPackage = styled.default.div`
 `;
 
 export default class Npm extends Component {
-  state = {
-    searchQuery: ''
-  };
-
-  constructor() {
+  constructor(props) {
     super();
     this.searchNpm = this.searchNpm.bind(this);
+    this.handleClickPackage = this.handleClickPackage.bind(this);
+    this.state = {
+      searchQuery: '',
+      loadedPackages: props.activePackages,
+    };
   }
   
   @debounce(500)
@@ -63,8 +64,23 @@ export default class Npm extends Component {
   }
 
   isPackageActive(packageName) {
-    console.log(this.props.activePackages);
-    return this.props.activePackages.indexOf(packageName) !== -1;
+    return this.state.loadedPackages.indexOf(packageName) !== -1;
+  }
+
+  handleClickPackage(packageName) {
+    let newPackageList;
+    if (this.state.loadedPackages.indexOf(packageName) !== -1) {
+      newPackageList = this.state.loadedPackages.filter(e => e !== packageName);
+    } else {
+      newPackageList = this.state.loadedPackages.concat(packageName);
+    }
+    this.setState({
+      loadedPackages: newPackageList,
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.onUnmount(this.state.loadedPackages);
   }
 
   render() {
@@ -85,6 +101,7 @@ export default class Npm extends Component {
               return (
                 <NpmPackageItem
                   key={each.name}
+                  onClick={() => this.handleClickPackage(each.name)}
                   isEnabled={this.isPackageActive(each.name)}
                 >
                   <p>{each.name}</p>

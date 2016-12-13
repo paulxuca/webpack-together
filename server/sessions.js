@@ -6,6 +6,7 @@ const path = require('path');
 const webpack = require('webpack');
 const devMiddleware = require('webpack-dev-middleware');
 const _ = require('lodash');
+const vendor = require('./vendor');
 
 class EmitHandler {
   constructor(sessionName, emitter) {
@@ -23,16 +24,34 @@ const getSession = (sessionName) => {
   return sessions[sessionName];
 };
 
-const updateSession = (sessionName, config, loaderConfig) => {
-  console.log(`Updating session ${sessionName}`);  
-  sessions[sessionName].loaderConfig = loaderConfig;
-
-
-  const newCompilerConfig = _.merge(sessions[sessionName].compiler.options, config);
-  sessions[sessionName].compiler.options = newCompilerConfig;
-  //wtf is this, causing me so much pain
-  sessions[sessionName].compiler.options.module.loaders = config.module.loaders;
+const updateSession = (
+  sessionName,
+  config,
+  loaderConfig,
+  vendorHash,
+  invalidatedLoaders,
+  invalidatedPackages,
+) => {
+  console.log(`updating session ${sessionName}
+  loaders: ${invalidatedLoaders}
+  packages: ${invalidatedPackages}
+  `);
   
+  sessions[sessionName].config.loaderConfig = loaderConfig;
+  sessions[sessionName].config.vendorHash = vendorHash;
+  sessions[sessionName].compiler.options.module.loaders = config.module.loaders;
+  sessions[sessionName].compiler.options.plugins = [];
+
+  if (invalidatedPackages) {
+    const newVendorManifest = vendor.getVendorManifest(vendorHash);
+    sessions[sessionName].compiler.apply(
+      new webpack.DllReferencePlugin({
+        context: process.cwd(),
+        manifest: newVendorManifest,
+      }),
+    );
+  }
+
   sessions[sessionName].webpackMiddleware.invalidate();
 };
 
@@ -49,16 +68,23 @@ const initializeSessionBundles = () => {
   fs.emptyDirSync(path.resolve(process.cwd(), 'sessions'));
 };
 
-const shouldInvalidate = (webpackConfig, sessionName) => {
-  if (sessions[sessionName]
-  && _.difference(webpackConfig.loaders, sessions[sessionName].loaderConfig)) {
+const shouldInvalidateLoaders = (webpackConfig, sessionName) => {
+  if (_.difference(webpackConfig.loaders, sessions[sessionName].config.loaderConfig).length > 0) {
     return true;
   }
   return false;
 };
 
+const shouldInvalidatePackages = (testVendorHash, sessionName) => {
+  const currentVendorHash = sessions[sessionName].config.vendorHash;
+  if (currentVendorHash !== testVendorHash) {
+    return true;
+  }
+  return false;
+}
+
 module.exports = {
-  addSession: (sessionName, config, handler, loaderConfig) => {
+  addSession: (sessionName, config, handler, loaderConfig, vendorHash) => {
     return new Promise((resolve) => {
       const compiler = webpack(config);
       const sessionHandler = new EmitHandler(sessionName, handler);
@@ -72,10 +98,13 @@ module.exports = {
 
       sessions[sessionName] = {
         sessionHandler,
-        sessionName,
         webpackMiddleware,
         compiler,
-        loaderConfig,
+        config: {
+          sessionName,
+          loaderConfig,
+          vendorHash,
+        }
       };
 
       compiler.plugin('done', sessions[sessionName].sessionHandler.handler);
@@ -89,5 +118,6 @@ module.exports = {
   removeSession,
   hasBundle,
   initializeSessionBundles,
-  shouldInvalidate,
+  shouldInvalidateLoaders,
+  shouldInvalidatePackages,
 };

@@ -11,17 +11,21 @@ module.exports = {
   installPackages: packageList => new Promise((resolve, reject) => {
     const currentPackageList = Object.keys(fs.readJsonSync(path.resolve(process.cwd(), 'package.json')).dependencies);
     const filteredList = packageList.filter(pkg => currentPackageList.indexOf(pkg) === -1);
-    const commandArgs = constructCommandArgs(filteredList);
-    if (!shell.which('yarn')) {
-      shell.echo('Yarn should be installed, this project relies on yarn');
-      shell.exit(1);
-    }
-    shell.exec(`${YARN_CMD} ${commandArgs}`, (code, stdout, stderr) => {
-      if (code === YARN_COMPLETE_CODE) {
-        resolve();
-      } else if (code === YARN_ERROR_CODE) {
-        reject();
+
+    if (filteredList.length) {
+      const commandArgs = constructCommandArgs(filteredList);
+      if (!shell.which('yarn')) {
+        shell.echo('Yarn should be installed, this project relies on yarn');
+        shell.exit(1);
       }
-    });
+      shell.exec(`${YARN_CMD} ${commandArgs}`, (code, stdout, stderr) => {
+        if (code === YARN_COMPLETE_CODE) {
+          resolve();
+        } else if (code === YARN_ERROR_CODE) {
+          reject();
+        }
+      });
+    }
+    resolve();
   }),
 };
