@@ -1,31 +1,48 @@
 const path = require('path');
-const shell = require('shelljs');
 const fs = require('fs-extra');
+const npmi = require('npmi');
 
-const YARN_CMD = 'yarn add';
-const YARN_COMPLETE_CODE = 0;
-const YARN_ERROR_CODE = 1;
-const constructCommandArgs = (packageList) => [].concat(packageList).join(' ');
+
+
+const installPackage = (pkgName) => {
+  return new Promise((resolve, reject) => {
+    npmi({
+      name: pkgName,
+      path: path.resolve(process.cwd(), 'packages'),
+      npmLoad: {
+        loglevel: 'silent',
+      },
+    }, (err, result) => {
+      console.log(result, err);
+      if (err) {
+        if (err.code === npmi.LOAD_ERR) reject('Npm load Error');
+        if (err.code === npmi.INSTALL_ERR) reject('Npm install Error');
+      } else {
+        resolve();
+      }
+    });
+  })
+}
+
+const installPackages = async (packageList) => new Promise(async (resolve, reject) => {
+  try {    
+    const currentPackages = fs.readJsonSync(path.resolve(process.cwd(), 'packages', 'PACKAGE_LIST.json'));
+    const pkgList = [].concat(packageList).filter(e => !currentPackages[e]);
+    for (var i = 0; i < pkgList.length; i++) {
+      await installPackage(pkgList[i]);
+    }
+    const newPackages = pkgList.reduce((t, e) => {
+      t[e] = e;
+      return t;
+    }, {});
+    fs.writeJsonSync(path.resolve(process.cwd(), 'packages', 'PACKAGE_LIST.json'), Object.assign({}, currentPackages, newPackages));
+    resolve();
+  } catch (error) {
+    console.log(error);
+    reject(error);
+  }
+});
 
 module.exports = {
-  installPackages: packageList => new Promise((resolve, reject) => {
-    const currentPackageList = Object.keys(fs.readJsonSync(path.resolve(process.cwd(), 'package.json')).dependencies);
-    const filteredList = packageList.filter(pkg => currentPackageList.indexOf(pkg) === -1);
-
-    if (filteredList.length) {
-      const commandArgs = constructCommandArgs(filteredList);
-      if (!shell.which('yarn')) {
-        shell.echo('Yarn should be installed, this project relies on yarn');
-        shell.exit(1);
-      }
-      shell.exec(`${YARN_CMD} ${commandArgs}`, (code, stdout, stderr) => {
-        if (code === YARN_COMPLETE_CODE) {
-          resolve();
-        } else if (code === YARN_ERROR_CODE) {
-          reject();
-        }
-      });
-    }
-    resolve();
-  }),
+  installPackages,
 };

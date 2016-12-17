@@ -21,6 +21,7 @@ export const changeSessionLoaders = (firebaseRef, newLoaders) => {
     });
 };
 
+
 export const changeSessionPackages = (firebaseRef, newPackages) => {
   firebaseRef
     .update({

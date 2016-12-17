@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { debounce } from 'react-decoration';
 import styled from 'styled-components';
 
-const NpmSearchbar = styled.default.input`
+const NpmSearchbar = styled.input`
   font-size: 13px;
   width: 100%;
   border: 1px solid #ccc;
@@ -17,12 +17,12 @@ const NpmSearchbar = styled.default.input`
   }
 `;
 
-const NpmPackageList = styled.default.ul`
+const NpmPackageList = styled.ul`
   margin: 0;
   padding: 0;
 `;
 
-const NpmPackageItem = styled.default.li`
+const NpmPackageItem = styled.li`
   list-style:none;
   ${props => !props.isEnabled && `
     opacity: 0.3;  
@@ -42,7 +42,7 @@ const NpmPackageItem = styled.default.li`
   }
 `;
 
-const NpmPackage = styled.default.div`
+const NpmPackage = styled.div`
   overflow: scroll;
   position: relative;
 `;

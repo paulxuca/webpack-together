@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import Modal from './Common/Modal';
 import { getMode } from '../utils/editor';
 
-const ModalContainer = styled.default.div`
+const ModalContainer = styled.div`
   padding: 30px;
   font-family: Avenir;
   font-weight: 400;
   font-size: 14px;
 `;
 
-const ModalInput = styled.default.input`
+const ModalInput = styled.input`
   background: white;
   border: 1px solid #EEE;
   width: 100%;
@@ -23,7 +23,7 @@ const ModalInput = styled.default.input`
   }
 `;
 
-const ModalButton = styled.default.button`
+const ModalButton = styled.button`
   display: block;
   padding: 5px 20px;
   margin: 20px 0px 0px 0px;
@@ -42,11 +42,11 @@ const ModalButton = styled.default.button`
   }
 `;
 
-const ModalLabel = styled.default.label`
+const ModalLabel = styled.label`
   margin-right: 10px;
 `;
 
-const ModalTitle = styled.default.h2`
+const ModalTitle = styled.h2`
   margin: 0;
 `;
 

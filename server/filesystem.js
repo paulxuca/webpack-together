@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
-
+const walk = require('./walk');
 const config = require('./config');
 
 const getSessionFileFolderFromName = (sessionName) => path.resolve(process.cwd(), 'sessions', sessionName, 'files');
@@ -26,7 +26,7 @@ const writeFile = (fileName, fileContents) => new Promise((resolve, reject) => {
 
 module.exports = {
   fs: fs,
-  updateSessionFiles: (files, vendorHash, sessionName) => {
+  updateSessionFiles: (files, sessionName) => {
     return new Promise(async (resolve) => {
       if (!fs.existsSync(getSessionFileFolderFromName(sessionName))) {
         fs.mkdirpSync(getSessionFileFolderFromName(sessionName));
@@ -35,14 +35,18 @@ module.exports = {
       let fileIter = 0;
       for (;fileIter < files.length; fileIter++) {
         const file = files[fileIter];
-        if (file.name.split('.')[file.name.split('.').length - 1] === 'html') {
-          await writeFile(fileNameFolder(file.name, sessionName), injectScriptTag(file.content, vendorHash, sessionName));
-        } else {
-          await writeFile(fileNameFolder(file.name, sessionName), file.content);
-        }
+        await writeFile(fileNameFolder(file.name, sessionName), file.content);
       }
       resolve();
     });
+  },
+  updateIndexFile: async (sessionName, vendorHash) => {
+    const indexFileContents = fs.readFileSync(fileNameFolder('index.html', sessionName), 'utf8');
+    await writeFile(fileNameFolder('index.html', sessionName), injectScriptTag(
+      indexFileContents,
+      vendorHash,
+      sessionName
+    ));
   },
   getSessionFile(sessionName, fileName) {
     const filePath = fileNameFolder(fileName, sessionName);

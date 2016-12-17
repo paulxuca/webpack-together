@@ -5,6 +5,7 @@ const bundle = require('./bundle');
 const sessions = require('./sessions');
 const vendor = require('./vendor');
 const intentEnum = require('./intent_enum');
+const walk = require('./walk');
 const boilerplates = require('./boilerplates');
 
 const mergeSessionData = (sessionConfig, sessionName) => Object.assign({}, sessionConfig, { sessionName });
@@ -46,24 +47,22 @@ const update = async (req, res) => {
   try {
     const sessionConfig = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.getFileState(sessionName);
-    const vendorHash = vendor.createVendorName(sessionConfig.packages);
-
-    await filesystem.updateSessionFiles(currentFilestate, vendorHash, sessionName);
-    
+    await filesystem.updateSessionFiles(currentFilestate, sessionName);
+    const packageList = walk.findAllModules(sessionName);
+    const vendorHash = vendor.createVendorName(packageList);
+    filesystem.updateIndexFile(sessionName, vendorHash);
 
     // Invalidate Clauses here (different loaders, packages)
     if (!vendor.existsVendorBundle(vendorHash)) {
-      await vendor.ensurePackages(sessionConfig.packages);
-      await vendor.createVendor(vendorHash, sessionConfig.packages);
+      await vendor.ensurePackages(sessionName);
+      await vendor.createVendor(vendorHash, packageList);
     }
     
     const hasBundle = sessions.hasBundle(sessionName);
-    let invalidatingLoaders;
-    let invalidatingPackages;
 
     if (hasBundle) {
-      invalidatingLoaders = sessions.shouldInvalidateLoaders(sessionConfig.webpack, sessionName);
-      invalidatingPackages = sessions.shouldInvalidatePackages(vendorHash, sessionName);
+      const invalidatingLoaders = sessions.shouldInvalidateLoaders(sessionConfig.webpack, sessionName);
+      const invalidatingPackages = sessions.shouldInvalidatePackages(vendorHash, sessionName);
 
       if (invalidatingLoaders || invalidatingPackages) {
         const { config, loaderConfig } = bundle.createWebpackConfig(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 const popIn = getEffect('height: 0px', 'height: 30px');
 const popOut = getEffect('height: 30px', 'height: 0px');
 
-const NetworkStatusBar = styled.default.div`
+const NetworkStatusBar = styled.div`
   width: 100%;
   height: 30px;
   background-color: black;

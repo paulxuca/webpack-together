@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const EditorMain = styled.default.div`
+export const EditorMain = styled.div`
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -9,13 +9,14 @@ export const EditorMain = styled.default.div`
   position: relative
 `;
 
-export const EditorWindow = styled.default.div`
+export const EditorWindow = styled.div`
   flex: 1;
   display: flex;
   flex-direction: row;
 `;
 
-export const EditorComponentPane = styled.default.div`
+
+export const EditorComponentPane = styled.div`
   flex: 1;
   position: relative;
   display: flex;
@@ -25,7 +26,7 @@ export const EditorComponentPane = styled.default.div`
   flex-direction: column;
 `;
 
-export const EditorEntryFilePrompt = styled.default.div`
+export const EditorEntryFilePrompt = styled.div`
   min-height: 30px;
   background: white;
   font-family: Avenir;
@@ -41,7 +42,7 @@ export const EditorEntryFilePrompt = styled.default.div`
   }
 `;
 
-export const Editor = styled.default.div`
+export const Editor = styled.div`
   display: block;
   flex: 1;
   position: relative;

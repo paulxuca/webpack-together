@@ -1,5 +1,6 @@
 import { observable, action } from 'mobx';
 import { getRequest } from '../utils/request';
+
 const config = require('../config');
 
 class UI {

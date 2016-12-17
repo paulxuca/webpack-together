@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
-const LoadersContainer = styled.default.div`
+const LoadersContainer = styled.div`
   flex: 1;
   overflow: scroll;
   border: 0;
 `;
 
-const LoaderText = styled.default.span`
+const LoaderText = styled.span`
   font-size: ${props => props.size}px;
   font-weight: ${props => props.weight};
   ${props => props.block && `
@@ -16,11 +16,11 @@ const LoaderText = styled.default.span`
   `}
 `;
 
-const LoaderOptionSection = styled.default.div`
+const LoaderOptionSection = styled.div`
   margin: 10px 0px;
 `;
 
-const LoaderOptions = styled.default.div`
+const LoaderOptions = styled.div`
   ${props => props.isDisabled && `
     opacity: 0.3; 
   `}

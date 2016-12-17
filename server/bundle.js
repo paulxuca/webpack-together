@@ -21,6 +21,11 @@ const createWebpackConfig = (sessionName, vendorHash, webpackConfig, entryFile) 
       entry: [
         getEntryPoint(sessionName, entryFile),
       ],
+      resolve: {
+        modules: [
+          path.resolve(process.cwd(), 'packages', 'node_modules'),
+        ],
+      },
       output: {
         path: getPublicPath(sessionName),
         publicPath: getPublicPath(sessionName),

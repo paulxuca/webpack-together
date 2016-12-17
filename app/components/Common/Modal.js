@@ -12,7 +12,7 @@ const popIn = keyframes`
   }
 `;
 
-const ModalOverlay = styled.default.div`
+const ModalOverlay = styled.div`
   width: 100%;
   font-family: Avenir;
   height: 100%;
@@ -25,7 +25,7 @@ const ModalOverlay = styled.default.div`
   z-index: 10;
 `;
 
-const ModalContainer = styled.default.div`
+const ModalContainer = styled.div`
   flex: 1;
   animation: ${popIn} 0.2s cubic-bezier(0.77, 0, 0.175, 1);
   @media (min-width: 1000px) {

@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react';
 import styled from 'styled-components';
 import Icon from './Common/Icon';
 
-const FileSelectorBar = styled.default.div`
+const FileSelectorBar = styled.div`
   flex: 1;
   max-height: 40px;
   min-height: 40px;
@@ -17,7 +17,7 @@ const FileSelectorBar = styled.default.div`
   display: flex;
 `;
 
-const FileSelectorList = styled.default.ul`
+const FileSelectorList = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
@@ -28,7 +28,7 @@ const FileSelectorList = styled.default.ul`
   flex: 4;
 `;
 
-const FileSelectorItem = styled.default.li`
+const FileSelectorItem = styled.li`
   min-width: 120px;
   padding: 20px 0px;
   background-color: ${props => props.isSelected ? '#EFF1F5' : '#DFE1E8'};
@@ -44,7 +44,7 @@ const FileSelectorItem = styled.default.li`
   }
 `;
 
-const NewFileSection = styled.default.div`
+const NewFileSection = styled.div`
   width: 250px;
   display: flex;
   align-items: center;
@@ -52,7 +52,7 @@ const NewFileSection = styled.default.div`
   background-color: #DFE1E8;
 `;
 
-const FileButton = styled.default.button`
+const FileButton = styled.button`
   flex: 1;
   font-family: Avenir;
   padding-bottom: 0px;
@@ -75,7 +75,7 @@ const FileButton = styled.default.button`
   }
 `;
 
-const SavedIndicator = styled.default.div`
+const SavedIndicator = styled.div`
   height: 5px
   width: 5px;
   position: relative;
@@ -86,7 +86,7 @@ const SavedIndicator = styled.default.div`
   margin-left: 5px;
 `;
 
-const DeleteButton = styled.default.button`
+const DeleteButton = styled.button`
   display: none;
   padding: 0;
 `;

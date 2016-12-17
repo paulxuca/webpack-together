@@ -10,7 +10,7 @@
     defaultConsole(message);
     window.parent.postMessage({
       type: 'log',
-      message: message,
+      message: JSON.stringify(message),
     }, location.origin);
   }
 }(window));

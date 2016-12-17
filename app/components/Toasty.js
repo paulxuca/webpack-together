@@ -6,7 +6,7 @@ import { getEffect } from '../utils/style';
 const popIn = getEffect('transform: translatey(100px)', 'transform: translatey(0px)');
 const popOut = getEffect('transform: translatey(0px)', 'transform: translatey(100px)')
 
-const ToastElement = styled.default.div`
+const ToastElement = styled.div`
   position: fixed;
   bottom: 0px;
   left: 0px;

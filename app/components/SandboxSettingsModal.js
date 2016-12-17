@@ -7,13 +7,13 @@ import Loaders from './Loaders';
 import Npm from './Npm';
 
 
-const ModalContainer = styled.default.div`
+const ModalContainer = styled.div`
   height: 400px;
   display: flex;
   position: relative;
 `;
 
-const ModalSection = styled.default.div`
+const ModalSection = styled.div`
   flex: 1;
   flex-direction: column;
   max-width: 50%;

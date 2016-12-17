@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { debounce } from 'react-decoration';
 import styled from 'styled-components';
 
-const PreviewWindow = styled.default.div`
+const PreviewWindow = styled.div`
   flex: 1;
   position:${props => props.expanded ? 'absolute' : 'relative'};
   ${props => props.expanded && `
@@ -20,14 +20,14 @@ const PreviewWindow = styled.default.div`
   }
 `;
 
-const PreviewWindowControls = styled.default.div`
+const PreviewWindowControls = styled.div`
   position: absolute;
   top: 0px;
   right: 0px;
   margin: 10px;
 `;
 
-const PreviewButton = styled.default.button`
+const PreviewButton = styled.button`
   color: #9b9b9b;
   font-size: 12px;
   float: right;
@@ -46,7 +46,7 @@ const PreviewButton = styled.default.button`
   }
 `;
 
-const ErrorMessage = styled.default.div`
+const ErrorMessage = styled.div`
   width: 100%;
   background-color: #C4534F;
   color: white;
