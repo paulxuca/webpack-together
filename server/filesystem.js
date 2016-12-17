@@ -1,15 +1,20 @@
 const path = require('path');
 const fs = require('fs-extra');
 const walk = require('./walk');
+const hash = require('string-hash');
 const config = require('./config');
 
 const getSessionFileFolderFromName = (sessionName) => path.resolve(process.cwd(), 'sessions', sessionName, 'files');
 const fileNameFolder = (fileName, sessionName) => path.resolve(getSessionFileFolderFromName(sessionName), fileName);
 
-const injectScriptTag = (fileContents, vendorHash, sessionName) => {
+const injectScriptTag = (fileContents, sessionName, packageList) => {
+  const vendorScripts = packageList.reduce((allScripts, eachVendor) => {
+    return allScripts += `<script src=${config.getVendorUrl(String(hash(eachVendor)))} crossorigin="anonymous"></script>\n`;
+  }, '');
+
   return fileContents.replace('</body>',
   `<script src=${config.getToolsUrl()}></script>
-  <script src=${config.getVendorUrl(vendorHash)} crossorigin="anonymous"></script>
+  ${vendorScripts}
   <script src=${config.getWebpackUrl(sessionName)} crossorigin="anonymous"></script>
   </body>`);
 };
@@ -40,12 +45,12 @@ module.exports = {
       resolve();
     });
   },
-  updateIndexFile: async (sessionName, vendorHash) => {
+  updateIndexFile: async (sessionName, packageList) => {
     const indexFileContents = fs.readFileSync(fileNameFolder('index.html', sessionName), 'utf8');
     await writeFile(fileNameFolder('index.html', sessionName), injectScriptTag(
       indexFileContents,
-      vendorHash,
-      sessionName
+      sessionName,
+      packageList
     ));
   },
   getSessionFile(sessionName, fileName) {

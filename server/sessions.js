@@ -32,26 +32,13 @@ const updateSession = (
   invalidatedLoaders,
   invalidatedPackages,
 ) => {
-  console.log(`updating session ${sessionName}
-  loaders: ${invalidatedLoaders}
-  packages: ${invalidatedPackages}
-  `);
+  console.log(`updating session ${sessionName}, loaders: ${invalidatedLoaders}, packages: ${invalidatedPackages}`);
   
   sessions[sessionName].config.loaderConfig = loaderConfig;
   sessions[sessionName].config.vendorHash = vendorHash;
-  sessions[sessionName].compiler.options.module.loaders = config.module.loaders;
-  sessions[sessionName].compiler.options.plugins = [];
+  sessions[sessionName].compiler = webpack(config);
 
-  if (invalidatedPackages) {
-    const newVendorManifest = vendor.getVendorManifest(vendorHash);
-    sessions[sessionName].compiler.apply(
-      new webpack.DllReferencePlugin({
-        context: process.cwd(),
-        manifest: newVendorManifest,
-      }),
-    );
-  }
-
+  // Invalidate the compiler, to allow recompiling
   sessions[sessionName].webpackMiddleware.invalidate();
 };
 
@@ -83,9 +70,10 @@ const shouldInvalidatePackages = (testVendorHash, sessionName) => {
   return false;
 }
 
-module.exports = {
-  addSession: (sessionName, config, handler, loaderConfig, vendorHash) => {
-    return new Promise((resolve) => {
+const addSession = (sessionName, config, handler, loaderConfig, vendorHash) => {
+  return new Promise((resolve, reject) => {
+    console.log(config);
+    try {
       const compiler = webpack(config);
       const sessionHandler = new EmitHandler(sessionName, handler);
       const webpackMiddleware = devMiddleware(compiler, {
@@ -111,11 +99,18 @@ module.exports = {
       
       app.use(sessions[sessionName].webpackMiddleware);
       resolve();
-    });
-  },
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports = {
+  addSession,
   getSession,
   updateSession,
   removeSession,
+
   hasBundle,
   initializeSessionBundles,
   shouldInvalidateLoaders,

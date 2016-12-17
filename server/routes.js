@@ -49,15 +49,12 @@ const update = async (req, res) => {
     const currentFilestate = await firebase.getFileState(sessionName);
     await filesystem.updateSessionFiles(currentFilestate, sessionName);
     const packageList = walk.findAllModules(sessionName);
-    const vendorHash = vendor.createVendorName(packageList);
-    filesystem.updateIndexFile(sessionName, vendorHash);
+    filesystem.updateIndexFile(sessionName, packageList);
 
     // Invalidate Clauses here (different loaders, packages)
-    if (!vendor.existsVendorBundle(vendorHash)) {
-      await vendor.ensurePackages(sessionName);
-      await vendor.createVendor(vendorHash, packageList);
-    }
-    
+    await vendor.ensurePackages(sessionName);
+    await vendor.createVendors(packageList);
+
     const hasBundle = sessions.hasBundle(sessionName);
 
     if (hasBundle) {
@@ -65,13 +62,13 @@ const update = async (req, res) => {
       const invalidatingPackages = sessions.shouldInvalidatePackages(vendorHash, sessionName);
 
       if (invalidatingLoaders || invalidatingPackages) {
-        const { config, loaderConfig } = bundle.createWebpackConfig(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);
+        const { config, loaderConfig } = await bundle.createWebpackConfig(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);
         sessions.updateSession(sessionName, config, loaderConfig, vendorHash, invalidatingLoaders, invalidatingPackages);
       }
     }
 
     if (!sessions.hasBundle(sessionName)) {
-      await bundle.updateBundle(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);
+      await bundle.updateBundle(sessionName, packageList, sessionConfig.webpack, sessionConfig.entryFile);
     }
 
     res.status(200).json(mergeSessionData(sessionConfig, sessionName));
