@@ -13,6 +13,7 @@ const handleError = (error, res) => {
   console.log(error);
   res.status(400).json(error);
 }
+const logUpdate = (sessionName, loaders, packages) => console.log(`Updating session ${sessionName}, loaders: ${loaders}, packages: ${packages}`);
 
 const intentMiddleware = async (req, res, next) => {
   const { sessionName } = req.cookies;
@@ -32,7 +33,9 @@ const sandboxMiddleware = async (req, res, next) => {
     next();
   } else {
     try {
-      req.sessionName = await firebase.createSession();
+      const sessionName = await firebase.createSession();
+      req.sessionName = sessionName;
+      res.cookie('sessionName', sessionName, { expires: new Date(Date.now() + 3600000)});
       next();
     } catch (err) {
       handleError(err, res);
@@ -47,23 +50,22 @@ const update = async (req, res) => {
   try {
     const sessionConfig = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.getFileState(sessionName);
-    await filesystem.updateSessionFiles(currentFilestate, sessionName);
-    const packageList = walk.findAllModules(sessionName);
-    filesystem.updateIndexFile(sessionName, packageList);
+    const packageList = walk.findAllModules(currentFilestate);
 
-    // Invalidate Clauses here (different loaders, packages)
-    await vendor.ensurePackages(sessionName);
+    await vendor.ensurePackages(packageList);
     await vendor.createVendors(packageList);
+    await filesystem.updateSessionFiles(currentFilestate, sessionName);
+    await filesystem.updateIndexFile(sessionName, packageList);
 
     const hasBundle = sessions.hasBundle(sessionName);
 
     if (hasBundle) {
-      const invalidatingLoaders = sessions.shouldInvalidateLoaders(sessionConfig.webpack, sessionName);
-      const invalidatingPackages = sessions.shouldInvalidatePackages(vendorHash, sessionName);
-
-      if (invalidatingLoaders || invalidatingPackages) {
-        const { config, loaderConfig } = await bundle.createWebpackConfig(sessionName, vendorHash, sessionConfig.webpack, sessionConfig.entryFile);
-        sessions.updateSession(sessionName, config, loaderConfig, vendorHash, invalidatingLoaders, invalidatingPackages);
+      const invalidateLoaders = sessions.shouldInvalidateLoaders(sessionName, sessionConfig.webpack);
+      const invalidatePackages = sessions.shouldInvalidatePackages(sessionName);
+      if (invalidateLoaders || invalidatePackages) {
+        logUpdate(sessionName, invalidateLoaders, invalidatePackages);
+        const { config, loaderConfig } = await bundle.createWebpackConfig(sessionName, packageList, sessionConfig.webpack, sessionConfig.entryFile);
+        await sessions.updateSession(sessionName, config, loaderConfig, packageList);
       }
     }
 
@@ -71,7 +73,7 @@ const update = async (req, res) => {
       await bundle.updateBundle(sessionName, packageList, sessionConfig.webpack, sessionConfig.entryFile);
     }
 
-    res.status(200).json(mergeSessionData(sessionConfig, sessionName));
+    res.status(200).json(sessionConfig);
   } catch (error) {
     handleError(error, res);
   }

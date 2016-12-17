@@ -13,7 +13,6 @@ const installPackage = (pkgName) => {
         loglevel: 'silent',
       },
     }, (err, result) => {
-      console.log(result, err);
       if (err) {
         if (err.code === npmi.LOAD_ERR) reject('Npm load Error');
         if (err.code === npmi.INSTALL_ERR) reject('Npm install Error');
@@ -35,8 +34,12 @@ const installPackages = async (packageList) => new Promise(async (resolve, rejec
       t[e] = e;
       return t;
     }, {});
-    fs.writeJsonSync(path.resolve(process.cwd(), 'packages', 'PACKAGE_LIST.json'), Object.assign({}, currentPackages, newPackages));
-    resolve();
+    fs.writeJSON(path.resolve(process.cwd(), 'packages', 'PACKAGE_LIST.json'), Object.assign({}, currentPackages, newPackages), (err) => {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
   } catch (error) {
     console.log(error);
     reject(error);

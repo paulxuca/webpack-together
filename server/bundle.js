@@ -13,7 +13,6 @@ const getPublicPath = sessionName =>  path.join('/', 'api', 'sandbox', sessionNa
 
 const createWebpackConfig = (sessionName, packageList, webpackConfig, entryFile) => {
   return new Promise(async (resolve) => {
-    
     const loaderConfig = loaders.createLoaders(webpackConfig.loaders);
     // const vendorManifest = await vendor.getVenacdorManifest(vendorHash);
 
@@ -53,9 +52,9 @@ const createWebpackConfig = (sessionName, packageList, webpackConfig, entryFile)
   });
 };
 
-const updateBundle = (sessionName, vendorHash, webpackConfig, entryFile) => {
-  return new Promise(async resolve => {
-    const { config, loaderConfig } = await createWebpackConfig(sessionName, vendorHash, webpackConfig, entryFile);
+const updateBundle = (sessionName, packageList, webpackConfig, entryFile) => {
+  return new Promise(async (resolve, reject) => {
+    const { config, loaderConfig } = await createWebpackConfig(sessionName, packageList, webpackConfig, entryFile);
 
     sessions
       .addSession(
@@ -63,9 +62,12 @@ const updateBundle = (sessionName, vendorHash, webpackConfig, entryFile) => {
         config,
         hasCompiledFnFirebase,
         loaderConfig,
-        vendorHash
+        packageList
       )
-      .then(() => resolve());
+      .then(() => resolve())
+      .catch((addSessionError) => {
+        reject(addSessionError);
+      });
   });
 };
 

@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "experimentalDecorators": true
   },
   "exclude": [
-    "/node_modules"
+    "node_modules/",
+    "sessions/",
+    "vendor/",
+    "packages/"
   ]
 }

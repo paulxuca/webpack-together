@@ -20,7 +20,6 @@ export default class Editor extends Component {
     this.handleIframeMessage = this.handleIframeMessage.bind(this);
     this.handleSaveShortcut = this.handleSaveShortcut.bind(this);
     this.handleLoaderUnmount = this.handleLoaderUnmount.bind(this);
-    this.handlePackagesUnmount = this.handlePackagesUnmount.bind(this);
   }
 
   componentDidMount() {
@@ -52,10 +51,6 @@ export default class Editor extends Component {
 
   handleLoaderUnmount(newActiveLoaders) {
     this.props.store.app.changeLoaders(newActiveLoaders);
-  }
-
-  handlePackagesUnmount(newActivePacakages) {
-    this.props.store.app.changePackages(newActivePacakages);
   }
 
   render() {

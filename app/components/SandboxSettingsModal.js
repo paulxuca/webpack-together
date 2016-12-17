@@ -4,8 +4,6 @@ import Modal from './Common/Modal';
 import styled from 'styled-components';
 
 import Loaders from './Loaders';
-import Npm from './Npm';
-
 
 const ModalContainer = styled.div`
   height: 400px;
@@ -45,33 +43,10 @@ export default class SandboxSettingsModal extends React.Component {
     }
     return null;
   }
-
-  renderNpm() {
-    const {
-      getPackagesList,
-      packageList,
-    } = this.props.store.ui;
-
-    const { packagesConfig } = this.props.store.app;
-    const { sandboxSettingsModalOpen } = this.props.store.ui;
-    
-    if (packagesConfig && sandboxSettingsModalOpen) {
-      return (
-        <Npm
-          npmList={packageList}
-          queryNpm={getPackagesList}
-          onUnmount={this.props.handlePackageClose}
-          activePackages={packagesConfig && packagesConfig.map(e => e.name)}
-        />
-      );
-    }
-    return null;
-  }
   
   render() {
     const { closeSandboxModal, sandboxSettingsModalOpen } = this.props.store.ui;
     
-
     return (
       <Modal
         closeModalFn={closeSandboxModal}
@@ -80,8 +55,6 @@ export default class SandboxSettingsModal extends React.Component {
       >
         <ModalContainer>
           <ModalSection style={{ borderRight: '1px solid #DDD'}}>
-            <h2>Packages</h2>
-            {this.renderNpm()}
           </ModalSection>
           <ModalSection>
             <h2>Loaders</h2>

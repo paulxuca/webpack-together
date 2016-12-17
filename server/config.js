@@ -28,7 +28,7 @@ module.exports = {
   apiUrl,
   cache: {
     prod: 'public, max-age=18000',
-    dev: 'private, no-cache, no-store, must-revalidate',
+    dev: 'public, max-age=18000',
   },
   getToolsUrl: () => `${apiUrl}/sandbox/tools.js`,
   getWebpackUrl: (sessionName) => `${apiUrl}/sandbox/${sessionName}/bundle.js`,

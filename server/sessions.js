@@ -28,22 +28,22 @@ const updateSession = (
   sessionName,
   config,
   loaderConfig,
-  vendorHash,
-  invalidatedLoaders,
-  invalidatedPackages,
+  packageConfig,
 ) => {
-  console.log(`updating session ${sessionName}, loaders: ${invalidatedLoaders}, packages: ${invalidatedPackages}`);
-  
-  sessions[sessionName].config.loaderConfig = loaderConfig;
-  sessions[sessionName].config.vendorHash = vendorHash;
-  sessions[sessionName].compiler = webpack(config);
+  return new Promise((resolve) => {
+    sessions[sessionName].config.loaderConfig = loaderConfig;
+    sessions[sessionName].config.packageConfig = packageConfig;
+    sessions[sessionName].compiler = webpack(config);
 
-  // Invalidate the compiler, to allow recompiling
-  sessions[sessionName].webpackMiddleware.invalidate();
+    // Invalidate the compiler, to allow recompiling
+    sessions[sessionName].webpackMiddleware.invalidate();
+    resolve();
+  });
 };
 
 const removeSession = (sessionName) => {
   console.log(`Removing session ${sessionName}`);
+  delete sessions[sessionName];
   sessions[sessionName].webpackMiddleware.close();
 };
 
@@ -55,24 +55,22 @@ const initializeSessionBundles = () => {
   fs.emptyDirSync(path.resolve(process.cwd(), 'sessions'));
 };
 
-const shouldInvalidateLoaders = (webpackConfig, sessionName) => {
+const shouldInvalidateLoaders = (sessionName, webpackConfig) => {
   if (_.difference(webpackConfig.loaders, sessions[sessionName].config.loaderConfig).length > 0) {
     return true;
   }
   return false;
 };
 
-const shouldInvalidatePackages = (testVendorHash, sessionName) => {
-  const currentVendorHash = sessions[sessionName].config.vendorHash;
-  if (currentVendorHash !== testVendorHash) {
+const shouldInvalidatePackages = (sessionName, packageConfig) => {
+  if (_.difference(sessions[sessionName].config.packageConfig, packageConfig).length > 0) {
     return true;
   }
   return false;
 }
 
-const addSession = (sessionName, config, handler, loaderConfig, vendorHash) => {
+const addSession = (sessionName, config, handler, loaderConfig, packageConfig) => {
   return new Promise((resolve, reject) => {
-    console.log(config);
     try {
       const compiler = webpack(config);
       const sessionHandler = new EmitHandler(sessionName, handler);
@@ -89,9 +87,8 @@ const addSession = (sessionName, config, handler, loaderConfig, vendorHash) => {
         webpackMiddleware,
         compiler,
         config: {
-          sessionName,
           loaderConfig,
-          vendorHash,
+          packageConfig,
         }
       };
 
@@ -99,8 +96,8 @@ const addSession = (sessionName, config, handler, loaderConfig, vendorHash) => {
       
       app.use(sessions[sessionName].webpackMiddleware);
       resolve();
-    } catch (err) {
-      reject(err);
+    } catch (addSessionError) {
+      reject(addSessionError);
     }
   });
 };

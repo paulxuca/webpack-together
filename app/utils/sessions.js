@@ -5,16 +5,9 @@ export const needsSave = (files) => !!files.filter((eachFile) => eachFile.isEdit
 
 export const getSession = () => {
   return new Promise(async(resolve) => {
-    const existingCookieOrNull = cookie.get('sessionName');
-    if (existingCookieOrNull) {
-      console.log(`Existing session ${existingCookieOrNull}`);
-      await postRequest('/api/session');
-      resolve({ sessionName: existingCookieOrNull });
-    } else {
-      const session = await postRequest('/api/session');
-      cookie.set('sessionName', session.sessionName, { expires: 1 / 24 });
-      resolve(session);
-    }
+    await postRequest('/api/session');
+    const sessionCookie = cookie.get('sessionName');
+    resolve(sessionCookie);
   });
 }
 

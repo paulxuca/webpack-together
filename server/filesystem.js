@@ -46,12 +46,16 @@ module.exports = {
     });
   },
   updateIndexFile: async (sessionName, packageList) => {
-    const indexFileContents = fs.readFileSync(fileNameFolder('index.html', sessionName), 'utf8');
-    await writeFile(fileNameFolder('index.html', sessionName), injectScriptTag(
-      indexFileContents,
-      sessionName,
-      packageList
-    ));
+    return new Promise((resolve, reject) => {
+      const indexFileContents = fs.readFileSync(fileNameFolder('index.html', sessionName), 'utf8');
+      writeFile(fileNameFolder('index.html', sessionName), injectScriptTag(
+        indexFileContents,
+        sessionName,
+        packageList
+      ))
+      .then(() => resolve())
+      .catch((err) => reject(err));
+    });
   },
   getSessionFile(sessionName, fileName) {
     const filePath = fileNameFolder(fileName, sessionName);

@@ -27,40 +27,47 @@ const existsVendorBundle = (vendorHash) => {
 }
 
 const createVendors = async (packageList) => {
-  const vendorHashes = packageList.map(each => {
-    const hashedVendor = String(hash(each));
-    if (!existsVendorBundle(hashedVendor)) {
-      return hashedVendor;
-    }
-  });
+  return new Promise((resolve, reject) => {
+    const vendorHashes = packageList.reduce((allHashes, each) => {
+      const hashedVendor = String(hash(each));
+      if (!existsVendorBundle(hashedVendor)) {
+        return allHashes.concat(hashedVendor);
+      }
+      return allHashes;
+    }, []);
 
-  if (vendorHashes.length) {
-    const vendorConfigs = vendorHashes.map((eachHash, index) => {
-      return {
-        entry: {
-          [`vendor_${eachHash}`]: [packageList[index]],
-        },
-        output: {
-          path: getPathForVendor(eachHash),
-          filename: 'dll.[name].js',
-          library: '[name]'
-        },
-        resolve: {
-          modules: [
-            path.resolve(process.cwd(), 'packages', 'node_modules')
+    if (vendorHashes.length) {
+      const vendorConfigs = vendorHashes.map((eachHash, index) => {
+        return {
+          entry: {
+            [`vendor_${eachHash}`]: [packageList[index]],
+          },
+          output: {
+            path: getPathForVendor(eachHash),
+            filename: 'dll.[name].js',
+            library: '[name]'
+          },
+          resolve: {
+            modules: [
+              path.resolve(process.cwd(), 'packages', 'node_modules')
+            ],
+          },
+          plugins: [
+            new webpack.DllPlugin({
+              path: path.join(getPathForVendor(eachHash), 'manifest.json'),
+              name: '[name]',
+              context: process.cwd(),
+            }),
           ],
-        },
-        plugins: [
-          new webpack.DllPlugin({
-            path: path.join(getPathForVendor(eachHash), 'manifest.json'),
-            name: '[name]',
-            context: process.cwd(),
-          }),
-        ],
-      };
-    });
-    await Promise.all(vendorConfigs.map(each => promiseWebpackRun(each)));
-  }
+        };
+      });
+      Promise
+        .all(vendorConfigs.map(each => promiseWebpackRun(each)))
+        .then(() => resolve())
+        .catch((err) => reject(err));
+    }
+    resolve();
+  });
 };
 
 
@@ -137,8 +144,7 @@ module.exports = {
     });
   },
   existsVendorBundle,
-  ensurePackages: (sessionName) => new Promise((resolve, reject) => {
-    const packageList = walk.findAllModules(sessionName);
+  ensurePackages: (packageList) => new Promise((resolve, reject) => {
     npm
       .installPackages(packageList)
       .then(() => resolve())

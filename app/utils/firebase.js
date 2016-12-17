@@ -21,12 +21,4 @@ export const changeSessionLoaders = (firebaseRef, newLoaders) => {
     });
 };
 
-
-export const changeSessionPackages = (firebaseRef, newPackages) => {
-  firebaseRef
-    .update({
-      packages: newPackages.map(e => ({ name: e})),
-    });
-}
-
 export const updateSessionData = firebaseRef => firebaseRef.update({ lastEdited: Date.now() });

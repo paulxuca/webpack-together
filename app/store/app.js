@@ -55,8 +55,9 @@ class App {
 
   @action getSession = async () => {
     try {
-      const session = await getSession();
-      this.sessionName = session.sessionName;
+      const sessionName = await getSession();
+      console.log(sessionName);
+      this.sessionName = sessionName;
       this.firebaseRef = getRefByName(this.sessionName);
       this.firebaseRef.on('value', this.sessionListener);
       this.firebaseRef.on('child_changed', this.childListener);
@@ -125,11 +126,6 @@ class App {
 
   @action changeLoaders = (newLoaders) => {
     changeSessionLoaders(this.firebaseRef, newLoaders);
-    this.saveFirebase(true);
-  }
-
-  @action changePackages = (newPackages) => {
-    changeSessionPackages(this.firebaseRef, newPackages);
     this.saveFirebase(true);
   }
 
