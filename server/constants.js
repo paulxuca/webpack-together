@@ -7,4 +7,4 @@ module.exports = {
     SCRIPT_INJECT_ERROR: 'SCRIPT_INJECT_ERROR',
     BUNDLE_ERROR: 'BUNDLE_ERROR',
   },
-}
+};
