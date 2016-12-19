@@ -1,0 +1,32 @@
+{
+  "files": [{
+    "name": "app.js",
+    "content": "// Write your application code here!\nimport React from 'react';\nimport { render } from 'react-dom';\nimport { createStore, Provider } from 'redux';\nimport reducer from './reducer';\n\nconst store = createStore(reducer);\n\nimport Main from './main';\n\nconst renderApp = () => {\n  render(\n    <Main\n      value={store.getState()}\n      inc={() => store.dispatch({ type: 'INCREMENT' })}\n      dec={() => store.dispatch({ type: 'DECREMENT' })}\n    />,document.getElementById('app'));\n}\n\nrenderApp();\nstore.subscribe(renderApp);\n\n"
+  }, {
+    "name": "index.html",
+    "content": "<html>\n  <body>\n    <div id=\"app\"></div>\n  </body>\n</html>"
+  }, {
+    "name": "main.js",
+    "content": "import React from 'react';\n\nclass Main extends React.Component {\n  render() {\n    return (\n      <div>\n        <h1>{this.props.value}</h1>\n        <button onClick={this.props.inc}>+</button>\n        <button onClick={this.props.dec}>-</button>\n      </div>\n    );\n  }\n}\n\nexport default Main;"
+  }, {
+    "name": "reducer.js",
+    "content": "export default function counterReducer(state = 0, action) {\n  switch(action.type) {\n    case 'INCREMENT':\n      return state + 1;\n    case 'DECREMENT':\n      return state - 1;\n    default:\n      return state;\n  }\n};\n"
+  }],
+  "entry": "app.js",
+  "packages": [{
+    "name": "react"
+  }, {
+    "name": "react-dom"
+  }, {
+    "name": "redux"
+  }],
+  "webpack": {
+    "loaders": [
+      "react",
+      "stage-0",
+      "es2015",
+      "babel",
+      "css"
+    ]
+  }
+}

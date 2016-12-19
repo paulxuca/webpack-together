@@ -17,9 +17,14 @@ module.exports = {
           return walkable.indexOf(extension) !== -1;
         })
         .reduce((allModules, eachFile) => {
+          
+          const detectableRows = eachFile.content.split('\n').filter((eachRow) => {
+            return eachRow.includes('require', 'import');
+          });
+
           try {
-            const es5Deps = detectiveES5(eachFile.content.replace(htmlRegex, '"'), {parse: {sourceType: 'module', ecmaVersion: 7 }});
-            const es6Deps = detectiveES6(eachFile.content, {parse: {sourceType: 'module', ecmaVersion: 7 }});
+            const es5Deps = detectiveES5(detectableRows, {parse: {sourceType: 'module', ecmaVersion: 7 }});
+            const es6Deps = detectiveES6(detectableRows, {parse: {sourceType: 'module', ecmaVersion: 7 }});
             return allModules.concat(es5Deps, es6Deps);
           } catch (moduleError) {
             reject(new Error(errors.WALK_ERROR));

@@ -13,7 +13,8 @@ const handleError = (error, res, sessionName) => {
   console.log(error.message);
   firebase.hasCompiled(sessionName);
   res.status(400).json(error);
-}
+};
+
 const logUpdate = (sessionName, loaders, packages) => console.log(`Updating session ${sessionName}, loaders: ${loaders}, packages: ${packages}`);
 
 const intentMiddleware = async (req, res, next) => {
