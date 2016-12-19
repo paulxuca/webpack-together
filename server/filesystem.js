@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const walk = require('./walk');
 const hash = require('string-hash');
 const config = require('./config');
+const errors = require('./constants').errors;
 
 const getSessionFileFolderFromName = (sessionName) => path.resolve(process.cwd(), 'sessions', sessionName, 'files');
 const fileNameFolder = (fileName, sessionName) => path.resolve(getSessionFileFolderFromName(sessionName), fileName);
@@ -54,15 +55,17 @@ module.exports = {
         packageList
       ))
       .then(() => resolve())
-      .catch((err) => reject(err));
+      .catch((err) => reject(new Error(errors.SCRIPT_INJECT_ERROR)));
     });
   },
   getSessionFile(sessionName, fileName) {
-    const filePath = fileNameFolder(fileName, sessionName);
-    if (!fs.readFileSync(filePath)) {
-      return null;
-    }
-    return fs.readFileSync(filePath).toString();
+    return new Promise((resolve, reject) => {
+      const filePath = fileNameFolder(fileName, sessionName);
+      if (!fs.existsSync(filePath)) {
+        reject();
+      }
+      resolve(fs.readFileSync(filePath).toString());
+    });
   },
   getBundleFile: sessionName => {
     const filePath = path.resolve(process.cwd(), 'api', 'sandbox', sessionName, 'bundle.js');

@@ -9,8 +9,9 @@ const walk = require('./walk');
 const boilerplates = require('./boilerplates');
 
 const mergeSessionData = (sessionConfig, sessionName) => Object.assign({}, sessionConfig, { sessionName });
-const handleError = (error, res) => {
-  console.log(error);
+const handleError = (error, res, sessionName) => {
+  console.log(error.message);
+  firebase.hasCompiled(sessionName);
   res.status(400).json(error);
 }
 const logUpdate = (sessionName, loaders, packages) => console.log(`Updating session ${sessionName}, loaders: ${loaders}, packages: ${packages}`);
@@ -35,7 +36,7 @@ const sandboxMiddleware = async (req, res, next) => {
     try {
       const sessionName = await firebase.createSession();
       req.sessionName = sessionName;
-      res.cookie('sessionName', sessionName, { expires: new Date(Date.now() + 3600000)});
+      res.cookie('sessionName', sessionName, { expires: new Date(Date.now() + 3600000) });
       next();
     } catch (err) {
       handleError(err, res);
@@ -50,7 +51,7 @@ const update = async (req, res) => {
   try {
     const sessionConfig = await firebase.getConfig(sessionName);
     const currentFilestate = await firebase.getFileState(sessionName);
-    const packageList = walk.findAllModules(currentFilestate);
+    const packageList = await walk.findAllModules(currentFilestate);
 
     await vendor.ensurePackages(packageList);
     await vendor.createVendors(packageList);
@@ -61,7 +62,7 @@ const update = async (req, res) => {
 
     if (hasBundle) {
       const invalidateLoaders = sessions.shouldInvalidateLoaders(sessionName, sessionConfig.webpack);
-      const invalidatePackages = sessions.shouldInvalidatePackages(sessionName);
+      const invalidatePackages = sessions.shouldInvalidatePackages(sessionName, packageList);
       if (invalidateLoaders || invalidatePackages) {
         logUpdate(sessionName, invalidateLoaders, invalidatePackages);
         const { config, loaderConfig } = await bundle.createWebpackConfig(sessionName, packageList, sessionConfig.webpack, sessionConfig.entryFile);
@@ -75,7 +76,7 @@ const update = async (req, res) => {
 
     res.status(200).json(sessionConfig);
   } catch (error) {
-    handleError(error, res);
+    handleError(error, res, sessionName);
   }
 };
 

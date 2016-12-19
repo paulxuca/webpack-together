@@ -1,4 +1,5 @@
-import { observable, action } from 'mobx';
+import { observable, action, toJS } from 'mobx';
+import difference from 'lodash/difference';
 import {
   getSession,
   saveAllAndAttemptCompiler,
@@ -55,8 +56,7 @@ class App {
 
   @action getSession = async () => {
     try {
-      const sessionName = await getSession();
-      console.log(sessionName);
+      const { sessionName, err } = await getSession();
       this.sessionName = sessionName;
       this.firebaseRef = getRefByName(this.sessionName);
       this.firebaseRef.on('value', this.sessionListener);
@@ -125,8 +125,11 @@ class App {
   }
 
   @action changeLoaders = (newLoaders) => {
-    changeSessionLoaders(this.firebaseRef, newLoaders);
-    this.saveFirebase(true);
+    // if (newLoaders)
+    if (difference(newLoaders, toJS(this.webpackConfig.loaders)).length > 0) {
+      changeSessionLoaders(this.firebaseRef, newLoaders);
+      this.saveFirebase(true);
+    }
   }
 
   @action fileExists = (name) => {

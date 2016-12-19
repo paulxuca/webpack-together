@@ -4,10 +4,13 @@ const uuid = require('uuid');
 const sessions = require('./sessions');
 const boilerplates = require('./boilerplates');
 const firebaseConfig = require('./config').firebase;
+const errors = require('./constants').errors;
+
 firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 const getSessionRef = sessionName => database.ref(`sessions/${sessionName}`);
+const getUserRef = userID => database.ref(`users/${userID}`);
 
 const activeClean = async () => {
   console.log(`Purging firebase at ${new moment().format()}`)
@@ -19,6 +22,14 @@ const activeClean = async () => {
     if (moment.duration(currentTime.diff(sessionLastEditedDate)).asMinutes() > 60) {
       sessions.remove(child.key);
     }
+  });
+}
+
+const addUser = (userID, sessionName) => {
+  // TOOD: Check if user is in another session first
+  const userRef = getUserRef(userID);
+  userRef.set({
+    activeSession: sessionName,
   });
 }
 
@@ -51,7 +62,7 @@ const createSession = (id = 0) => new Promise((resolve, reject) => {
     });
     resolve(sessionName);
   } catch (error) {
-    reject(error);
+    reject(new Error(errors.FIREBASE_ERROR));
   }
 });
 
@@ -76,7 +87,7 @@ const deleteFile = (fileHash, sessionName) => new Promise((resolve, reject) => {
  firebaseRef.child(`files/${fileHash}`)
   .remove()
   .then(() => resolve())
-  .catch((error) => reject(error));
+  .catch((error) => reject(new Error(errors.FIREBASE_ERROR)));
 });
 
 const getFileState = sessionName => new Promise( async resolve => {
@@ -125,6 +136,8 @@ module.exports = {
   hasCompiled,
   getFileState,
   setCompiling,
+
+  addUser,
 };
 
 

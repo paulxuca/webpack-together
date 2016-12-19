@@ -5,6 +5,7 @@ const npm = require('./npm');
 const path = require('path');
 const config = require('./config');
 const utils = require('./utils');
+const errors = require('./constants').errors;
 const walk = require('./walk');
 
 const getPathForVendor = vendorHash => path.resolve(process.cwd(), 'vendor', vendorHash);
@@ -137,7 +138,7 @@ module.exports = {
       webpackVendorCompiler.run((err) => {
         if (err) {
           console.log('Error compiling vendor', err);
-          reject(err);
+          reject(new Error(errors.VENDOR_COMPILER_ERROR));
         }
         resolve();
       });
@@ -148,7 +149,7 @@ module.exports = {
     npm
       .installPackages(packageList)
       .then(() => resolve())
-      .catch((err) => reject(err));
+      .catch((err) => reject(new Error(errors.PACKAGE_INSTALL_ERROR)));
   }),
   getVendorFile(req, res) {
     const vHash = req.params.vendorHash.match(vendorHashRegex)[1];

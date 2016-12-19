@@ -1,8 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const npmi = require('npmi');
-
-
+const packageQueue = [];
 
 const installPackage = (pkgName) => {
   return new Promise((resolve, reject) => {
@@ -17,6 +16,7 @@ const installPackage = (pkgName) => {
         if (err.code === npmi.LOAD_ERR) reject('Npm load Error');
         if (err.code === npmi.INSTALL_ERR) reject('Npm install Error');
       } else {
+        packageQueue.shift();
         resolve();
       }
     });
@@ -24,9 +24,12 @@ const installPackage = (pkgName) => {
 }
 
 const installPackages = async (packageList) => new Promise(async (resolve, reject) => {
+
+  
   try {    
     const currentPackages = fs.readJsonSync(path.resolve(process.cwd(), 'packages', 'PACKAGE_LIST.json'));
-    const pkgList = [].concat(packageList).filter(e => !currentPackages[e]);
+    const pkgList = [].concat(packageList).filter(e => !currentPackages[e] && packageQueue.indexOf(e) === -1);
+    packageQueue.push(pkgList);
     for (var i = 0; i < pkgList.length; i++) {
       await installPackage(pkgList[i]);
     }

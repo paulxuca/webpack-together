@@ -6,6 +6,7 @@ const webpack = require('webpack');
 const hash = require('string-hash');
 const path = require('path');
 const sessions = require('./sessions');
+const errors = require('./constants').errors;
 const hasCompiledFnFirebase = require('./firebase').hasCompiled;
 
 const getEntryPoint = (sessionName, entryFile) => path.resolve(process.cwd(), 'sessions', sessionName, 'files', entryFile);
@@ -66,7 +67,7 @@ const updateBundle = (sessionName, packageList, webpackConfig, entryFile) => {
       )
       .then(() => resolve())
       .catch((addSessionError) => {
-        reject(addSessionError);
+        reject(new Error(errors.BUNDLE_ERROR));
       });
   });
 };

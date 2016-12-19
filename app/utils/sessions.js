@@ -5,9 +5,17 @@ export const needsSave = (files) => !!files.filter((eachFile) => eachFile.isEdit
 
 export const getSession = () => {
   return new Promise(async(resolve) => {
-    await postRequest('/api/session');
-    const sessionCookie = cookie.get('sessionName');
-    resolve(sessionCookie);
+    try {
+      await postRequest('/api/session');
+      resolve({ sessionName: cookie.get('sessionName') });
+    } catch (initError) {
+      const sessionName = cookie.get('sessionName');
+      if (sessionName) {
+        resolve({ sessionName });
+      } else {
+        resolve({ error: initError });
+      }
+    }
   });
 }
 

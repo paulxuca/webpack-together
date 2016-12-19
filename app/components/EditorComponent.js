@@ -47,6 +47,8 @@ export default class EditorComponent extends Component {
       this.editor.getSession().selection.on('changeCursor', this.handleCursorPositionChange);
       this.editor.getSession().on('paste', this.handleCursorPositionChange);
       this.editor.clearSelection();
+      this.editor.commands.bindKey('Cmd-Z', null);
+      window.addEventListener('keydown', this.handleMetaKeyPress);
       getMode(files[fileIndex].name, this.editor);      
     }
 
@@ -70,6 +72,13 @@ export default class EditorComponent extends Component {
       
       this.editor.clearSelection();      
       this.editor.getSession().on('change', this.handleEditorChange);
+    }
+
+    handleMetaKeyPress = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.keyCode === 90) {
+        e.preventDefault();
+        this.editor.getSession().getUndoManager().undo(true);
+      }
     }
 
     handleEditorChange(e) {

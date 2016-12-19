@@ -7,13 +7,19 @@ const path = require('path');
 const tools = fs.fs.readFileSync(path.resolve(process.cwd(), 'server', 'tools.js'), 'utf8').toString();
 
 module.exports = {
-  getIndex: (req, res) => {
-    const index = fs.getSessionFile(req.sessionName, 'index.html');
-    res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.setHeader('Expires', '-1');
-    res.setHeader('Pragma', 'no-cache');
-    res.type('html');
-    res.status(200).send(index);
+  getIndex: async (req, res) => {
+    fs
+    .getSessionFile(req.sessionName, 'index.html')
+    .then((indexFile) => {
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      res.setHeader('Expires', '-1');
+      res.setHeader('Pragma', 'no-cache');
+      res.type('html');
+      res.status(200).send(indexFile);
+    })
+    .catch((error) => {
+      res.sendStatus(400);
+    });
   },
   getFile: (req, res) => {
     const file = fs.getBundleFile(req.sessionName);
