@@ -33,6 +33,12 @@ const debounce = (func, wait, immediate) => {
 	};
 };
 
+const getFiles = (currentValue) => Object.keys(currentValue).map((key) => {
+  if (this.filesKey.indexOf(key) === -1) {
+    this.filesKey.push(key);
+  }
+  return currentValue.files[key];
+});
 
 class App {
   @observable sessionName;
@@ -46,6 +52,7 @@ class App {
   @observable isCompiling;
   @observable toastMessage;
   @observable canChangeIndex;
+  @observable users;
 
   constructor() {
     this.currentFileIndex = 0;
@@ -58,11 +65,11 @@ class App {
     try {
       const { sessionName, err } = await getSession();
       this.sessionName = sessionName;
-      this.firebaseRef = getRefByName(this.sessionName);
+      this.firebaseRef = getRefByName(this.sessionName);      
       this.firebaseRef.on('value', this.sessionListener);
       this.firebaseRef.on('child_changed', this.childListener);
     } catch (error) {
-      console.log(error);
+      this.displayToast('An Error occured when initalizing the sandbox. Reload the page or try again later!', 5000);
     }
   }
 
@@ -80,19 +87,15 @@ class App {
     this.entryFileName = currentValue.entryFile;
     this.webpackConfig = currentValue.webpack;
     this.packagesConfig = currentValue.packages;
-
-    this.files = Object.keys(currentValue.files).map((key) => {
-      if (this.filesKey.indexOf(key) === -1) {
-        this.filesKey.push(key);
-      }
-      return currentValue.files[key];
-    });
+    this.users = currentValue.users;
+    this.files = getFiles(currentValue.files);
 
     if (currentValue.isCompiling) {
       this.displayToast('Recompiling in progress!');
     } else if (this.isCompiling && !currentValue.isCompiling) {
       this.toastMessage = false;
     }
+
     this.isCompiling = currentValue.isCompiling;        
   }
 
@@ -122,6 +125,10 @@ class App {
     if ((needsSave(this.files) && !this.isCompiling) || override) {
       saveAllAndAttemptCompiler(this.sessionName);
     }
+  }
+
+  @action updatePublicCursorPosition = () => {
+
   }
 
   @action changeLoaders = (newLoaders) => {

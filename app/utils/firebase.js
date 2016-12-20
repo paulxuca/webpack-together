@@ -2,7 +2,9 @@ import firebase from 'firebase';
 import 'firebase/database';
 
 export const initializeFirebase = (config) => firebase.initializeApp(config);
+
 export const getRefByName = (name) => firebase.database().ref(`sessions/${name}`);
+
 export const updateToFirebase = (firebaseRef, fileIndex, fileValue) => {
   firebaseRef
     .child('files')

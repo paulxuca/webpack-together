@@ -46,6 +46,7 @@ export default class EditorComponent extends Component {
         tabSize: 2,
         useSoftTabs: true,
       });
+
       this.editor.getSession().on('change', this.handleEditorChange);
       this.editor.getSession().selection.on('changeCursor', this.handleCursorPositionChange);
       this.editor.getSession().on('paste', this.handleCursorPositionChange);
@@ -95,6 +96,8 @@ export default class EditorComponent extends Component {
     }
 
     handleCursorPositionChange(e) {
+      console.log(e);
+      // Handle change selection here!;
       this.setState({
         cursor: this.editor.getCursorPosition(),
       });

@@ -5,6 +5,7 @@ const sessions = require('./sessions');
 const boilerplates = require('./boilerplates');
 const firebaseConfig = require('./config').firebase;
 const errors = require('./constants').errors;
+const users = {};
 
 firebase.initializeApp(firebaseConfig);
 
@@ -28,8 +29,12 @@ const activeClean = async () => {
 const addUser = (userID, sessionName) => {
   // TOOD: Check if user is in another session first
   const userRef = getUserRef(userID);
-  userRef.set({
-    activeSession: sessionName,
+  users[userID] = {
+    userID,
+    sessionName,
+  };
+  getSessionRef(sessionName).child(`users/${userID}`).set({
+    userID,
   });
 }
 
