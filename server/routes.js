@@ -69,10 +69,8 @@ const update = async (req, res) => {
         const { config, loaderConfig } = await bundle.createWebpackConfig(sessionName, packageList, sessionConfig.webpack, sessionConfig.entryFile);
         await sessions.updateSession(sessionName, config, loaderConfig, packageList);
       }
-    }
-
-    if (!sessions.hasBundle(sessionName)) {
-      await bundle.updateBundle(sessionName, packageList, sessionConfig.webpack, sessionConfig.entryFile);
+    } else {
+      await bundle.updateBundle(sessionName, packageList, sessionConfig.webpack, sessionConfig.entryFile);      
     }
 
     res.status(200).json(sessionConfig);

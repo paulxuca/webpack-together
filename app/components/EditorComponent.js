@@ -1,6 +1,7 @@
 // import 'codemirror/lib/codemirror.css';
 import './ace.css';
 require('brace/theme/tomorrow');
+require('brace/ext/language_tools.js');
 
 import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
@@ -31,6 +32,8 @@ export default class EditorComponent extends Component {
     }
 
     componentDidMount() {
+      ace.acequire('ace/ext/language_tools');
+      
       const { files, fileIndex } = this.props;
       
       this.editor = ace.edit('aceeditor');
@@ -48,6 +51,12 @@ export default class EditorComponent extends Component {
       this.editor.getSession().on('paste', this.handleCursorPositionChange);
       this.editor.clearSelection();
       this.editor.commands.bindKey('Cmd-Z', null);
+
+      this.editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: false
+      });
+
       window.addEventListener('keydown', this.handleMetaKeyPress);
       getMode(files[fileIndex].name, this.editor);      
     }

@@ -19,8 +19,8 @@ module.exports = {
         .reduce((allModules, eachFile) => {
           
           const detectableRows = eachFile.content.split('\n').filter((eachRow) => {
-            return eachRow.includes('require', 'import');
-          });
+            return eachRow.match(/import|require/);
+          }).join('\n');
 
           try {
             const es5Deps = detectiveES5(detectableRows, {parse: {sourceType: 'module', ecmaVersion: 7 }});

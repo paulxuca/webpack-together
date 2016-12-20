@@ -15,7 +15,6 @@ const getPublicPath = sessionName =>  path.join('/', 'api', 'sandbox', sessionNa
 const createWebpackConfig = (sessionName, packageList, webpackConfig, entryFile) => {
   return new Promise(async (resolve) => {
     const loaderConfig = loaders.createLoaders(webpackConfig.loaders);
-    // const vendorManifest = await vendor.getVenacdorManifest(vendorHash);
 
     const vendorPlugins = packageList.map((each) => {
       const vendorManifest = vendor.getVendorManifest(String(hash(each)));
@@ -67,6 +66,7 @@ const updateBundle = (sessionName, packageList, webpackConfig, entryFile) => {
       )
       .then(() => resolve())
       .catch((addSessionError) => {
+        console.log('ERROR!');
         reject(new Error(errors.BUNDLE_ERROR));
       });
   });

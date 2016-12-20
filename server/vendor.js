@@ -66,8 +66,9 @@ const createVendors = async (packageList) => {
         .all(vendorConfigs.map(each => promiseWebpackRun(each)))
         .then(() => resolve())
         .catch((err) => reject(err));
+    } else {
+      resolve();
     }
-    resolve();
   });
 };
 
@@ -89,7 +90,11 @@ module.exports = {
     return vendorHash;
   },
   getVendorManifest:(vendorHash) => {
-    return JSON.parse(fs.fs.readFileSync(path.join(getPathForVendor(vendorHash), 'manifest.json')).toString());
+    try {
+      return JSON.parse(fs.fs.readFileSync(path.join(getPathForVendor(vendorHash), 'manifest.json')).toString());
+    } catch (err) {
+      console.log(err);
+    }
   },
   initializeVendorFolder() {
     console.log('Initalizing Vendor folder!');
