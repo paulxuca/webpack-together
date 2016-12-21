@@ -60,6 +60,7 @@ export default class Editor extends Component {
       currentFileIndex,
       entryFileName,
       writeToFirebase,
+      updatePublicCursorPosition
     } = this.props.store.app;
 
     const { 
@@ -87,6 +88,7 @@ export default class Editor extends Component {
             fileIsEntry={files[currentFileIndex].name === entryFileName}
             writeFirebase={writeToFirebase}
             isOnline={onlineStatus}
+            changeCursorPosition={updatePublicCursorPosition}
           />
           <Preview
             isCompiling={isCompiling}

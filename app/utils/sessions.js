@@ -19,6 +19,8 @@ export const getSession = () => {
   });
 }
 
+export const getUserID = () => cookie.get('userID');
+
 export const getIndex = sessionName => new Promise(async (res, rej) => {
   await getRequest('api/sandbox', {
     headers: {

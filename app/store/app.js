@@ -6,6 +6,7 @@ import {
   createNewFile,
   deleteFile,
   needsSave,
+  getUserID,
 } from '../utils/sessions';
 import {
   getRefByName,
@@ -33,13 +34,6 @@ const debounce = (func, wait, immediate) => {
 	};
 };
 
-const getFiles = (currentValue) => Object.keys(currentValue).map((key) => {
-  if (this.filesKey.indexOf(key) === -1) {
-    this.filesKey.push(key);
-  }
-  return currentValue.files[key];
-});
-
 class App {
   @observable sessionName;
   @observable webpackConfig;
@@ -59,18 +53,18 @@ class App {
     this.filesKey = [];
     this.canChangeIndex = true;
     this.saveFirebase = debounce(this.saveFirebase, 300);
+    this.updatePublicCursorPosition = debounce(this.updatePublicCursorPosition, 100);
   }
 
   @action getSession = async () => {
-    try {
-      const { sessionName, err } = await getSession();
-      this.sessionName = sessionName;
-      this.firebaseRef = getRefByName(this.sessionName);      
-      this.firebaseRef.on('value', this.sessionListener);
-      this.firebaseRef.on('child_changed', this.childListener);
-    } catch (error) {
-      this.displayToast('An Error occured when initalizing the sandbox. Reload the page or try again later!', 5000);
-    }
+    const { sessionName, error } = await getSession();
+    if (error) this.displayToast('An Error occured when initalizing the sandbox. Reload the page or try again later!', 5000);
+    
+    this.userID = getUserID();
+    this.sessionName = sessionName;
+    this.firebaseRef = getRefByName(this.sessionName);      
+    this.firebaseRef.on('value', this.sessionListener);
+    this.firebaseRef.on('child_changed', this.childListener);
   }
 
   @action changeSelectedFileIndex = (index) => this.currentFileIndex = index;
@@ -88,7 +82,13 @@ class App {
     this.webpackConfig = currentValue.webpack;
     this.packagesConfig = currentValue.packages;
     this.users = currentValue.users;
-    this.files = getFiles(currentValue.files);
+
+    this.files = Object.keys(currentValue.files).map((key) => {
+      if (this.filesKey.indexOf(key) === -1) {
+        this.filesKey.push(key);
+      }
+      return currentValue.files[key];
+    });
 
     if (currentValue.isCompiling) {
       this.displayToast('Recompiling in progress!');
@@ -127,8 +127,11 @@ class App {
     }
   }
 
-  @action updatePublicCursorPosition = () => {
-
+  @action updatePublicCursorPosition = (isRange, position) => {
+    this.firebaseRef.child(`users/${this.userID}`).set({
+      isRange,
+      position,
+    });
   }
 
   @action changeLoaders = (newLoaders) => {
