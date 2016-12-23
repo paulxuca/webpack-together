@@ -1,9 +1,10 @@
 export const MODE_MAP = {
   js: 'jsx',
+  jsx: 'jsx',
   css: 'css',
   ts: 'typescript',
   tsx: 'typescript',
-  coffee: 'cofeescript',
+  coffee: 'coffeescript',
   less: 'less',
   scss: 'scss',
   html: 'html',

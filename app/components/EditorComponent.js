@@ -31,101 +31,102 @@ const hasSelection = (start, end) => {
 
 @observer
 export default class EditorComponent extends Component {
-    constructor() {
-      super();
-      this.state = initalState;
-      this.handleCursorPositionChange = this.handleCursorPositionChange.bind(this);
-      this.handleEditorChange = this.handleEditorChange.bind(this);
+  constructor() {
+    super();
+    this.state = initalState;
+    this.handleCursorPositionChange = this.handleCursorPositionChange.bind(this);
+    this.handleEditorChange = this.handleEditorChange.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleMetaKeyPress);
+    ace.acequire('ace/ext/language_tools');
+    
+    const { files, fileIndex } = this.props;
+    
+    this.editor = ace.edit('aceeditor');
+    this.editor.setTheme('ace/theme/tomorrow');
+    this.editor.$blockScrolling = window.Infinity;
+    this.editor.setShowPrintMargin(false);
+    this.editor.setValue(files[fileIndex].content);
+    this.editor.getSession().setUseWrapMode(true);
+    this.editor.getSession().setOptions({
+      tabSize: 2,
+      useSoftTabs: true,
+    });
+
+
+    this.editor.getSession().on('change', this.handleEditorChange);
+    this.editor.getSession().on('paste', this.handleCursorPositionChange);      
+    this.editor.getSession().selection.on('changeCursor', this.handleCursorPositionChange);
+
+    this.editor.clearSelection();
+    this.editor.commands.bindKey('Cmd-Z', null);
+
+    this.editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: false
+    });
+
+    getMode(files[fileIndex].name, this.editor);      
+  }
+
+  componentWillReceiveProps(nextProps, nextState) {
+    this.editor.getSession().off('change', this.handleEditorChange)
+    const nextFile = nextProps.files[nextProps.fileIndex];    
+    
+    if (nextFile.content !== this.editor.getValue()) {
+      this.editor.setValue(nextFile.content);
+    }
+    
+    if (!nextProps.isOnline) {
+      this.editor.setReadOnly(true);
+    } else {
+      this.editor.setReadOnly(false);
     }
 
-    componentDidMount() {
-      window.addEventListener('keydown', this.handleMetaKeyPress);
-      ace.acequire('ace/ext/language_tools');
-      
-      const { files, fileIndex } = this.props;
-      
-      this.editor = ace.edit('aceeditor');
-      this.editor.setTheme('ace/theme/tomorrow');
-      this.editor.$blockScrolling = window.Infinity;
-      this.editor.setShowPrintMargin(false);
-      this.editor.setValue(files[fileIndex].content);
-      this.editor.getSession().setUseWrapMode(true);
-      this.editor.getSession().setOptions({
-        tabSize: 2,
-        useSoftTabs: true,
-      });
-
-
-      this.editor.getSession().on('change', this.handleEditorChange);
-      this.editor.getSession().on('paste', this.handleCursorPositionChange);      
-      this.editor.getSession().selection.on('changeCursor', this.handleCursorPositionChange);
-
+    if (nextProps.fileIndex !== this.props.fileIndex) {
+      getMode(nextFile.name, this.editor);
       this.editor.clearSelection();
-      this.editor.commands.bindKey('Cmd-Z', null);
-
-      this.editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: false
-      });
-
-      getMode(files[fileIndex].name, this.editor);      
     }
+    
+    this.editor.getSession().on('change', this.handleEditorChange);
+  }
 
-    componentWillReceiveProps(nextProps, nextState) {
-      this.editor.getSession().off('change', this.handleEditorChange)
-      const nextFile = nextProps.files[nextProps.fileIndex];    
-      
-      if (nextFile.content !== this.editor.getValue()) {
-        this.editor.setValue(nextFile.content);
-      }
-      
-      if (!nextProps.isOnline) {
-        this.editor.setReadOnly(true);
-      } else {
-        this.editor.setReadOnly(false);
-      }
-
-      if (nextProps.fileIndex !== this.props.fileIndex) {
-        getMode(nextFile.name, this.editor);
-      }
-      
-      this.editor.clearSelection();      
-      this.editor.getSession().on('change', this.handleEditorChange);
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.cursor.row !== this.state.cursor.row && nextState.cursor.column !== this.state.cursor.column) {
+      this.editor.moveCursorTo(nextState.cursor.row, nextState.cursor.column);
     }
+  }
 
-    componentWillUpdate(nextProps, nextState) {
-      if (nextState.cursor.row !== this.state.cursor.row && nextState.cursor.column !== this.state.cursor.column) {
-        this.editor.moveCursorTo(nextState.cursor.row, nextState.cursor.column);
-      }
+  handleMetaKeyPress = (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.keyCode === 90) {
+      e.preventDefault();
+      this.editor.getSession().getUndoManager().undo(true);
     }
+  }
 
-    handleMetaKeyPress = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.keyCode === 90) {
-        e.preventDefault();
-        this.editor.getSession().getUndoManager().undo(true);
-      }
+  handleEditorChange(e) {
+    this.props.writeFirebase(this.props.fileIndex, this.editor.getValue());
+  }
+
+  handleCursorPositionChange(e) {
+    const cursorPosition = this.editor.getCursorPosition();
+    const { start, end } = this.editor.selection.getRange();      
+
+    this.setState({
+      cursor: cursorPosition,
+    });
+
+    if (hasSelection(start, end)) {
+      this.props.changeCursorPosition(true, { start, end });
+    } else {
+      this.props.changeCursorPosition(false, cursorPosition);
     }
-
-    handleEditorChange(e) {
-      this.props.writeFirebase(this.props.fileIndex, this.editor.getValue());
-    }
-
-    handleCursorPositionChange(e) {
-      const cursorPosition = this.editor.getCursorPosition();
-      const { start, end } = this.editor.selection.getRange();      
-
-      this.setState({
-        cursor: cursorPosition,
-      });
-
-      if (hasSelection(start, end)) {
-        this.props.changeCursorPosition(true, { start, end });
-      } else {
-        this.props.changeCursorPosition(false, cursorPosition);
-      }
-    }
+  }
 
   render() {
+    console.log(this.props.publicUsers);
     return (
       <EditorComponentPane>
         {this.props.fileIsEntry ? <EditorEntryFilePrompt>

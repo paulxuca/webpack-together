@@ -56,6 +56,7 @@ export default class Editor extends Component {
   render() {
     const {
       files,
+      users,
       isCompiling,
       currentFileIndex,
       entryFileName,
@@ -88,6 +89,7 @@ export default class Editor extends Component {
             fileIsEntry={files[currentFileIndex].name === entryFileName}
             writeFirebase={writeToFirebase}
             isOnline={onlineStatus}
+            publicUsers={users}
             changeCursorPosition={updatePublicCursorPosition}
           />
           <Preview

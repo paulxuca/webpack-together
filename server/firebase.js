@@ -14,9 +14,9 @@ const getSessionRef = sessionName => database.ref(`sessions/${sessionName}`);
 const getUserRef = userID => database.ref(`users/${userID}`);
 
 const activeClean = async () => {
-  console.log(`Purging firebase at ${new moment().format()}`)
   const currentTime = new moment();
-  const currentSessions = await database.ref('sessions').once('value').then(snapshot => snapshot);
+  console.log(`Purging firebase at ${currentTime.format()}`); 
+  const currentSessions = await database.ref('sessions').once('value');
 
   currentSessions.forEach((child) => {
     const sessionLastEditedDate = child.val().lastEdited;
@@ -28,11 +28,17 @@ const activeClean = async () => {
 
 const addUser = (userID, sessionName) => {
   // TOOD: Check if user is in another session first
+  if (users[userID]) {
+    delete users[userID];
+    getSessionRef(sessionName).child(`users/${userID}`).remove(userID);
+  }
+
   const userRef = getUserRef(userID);
   users[userID] = {
     userID,
     sessionName,
   };
+
   getSessionRef(sessionName).child(`users/${userID}`).set({
     userID,
   });
@@ -130,6 +136,19 @@ const setCompiling = sessionName => {
     isCompiling: true,
   });
 };
+
+const cleanUsersFirebase = async () => {
+  const currentTime = new moment();
+  console.log('Purging firebase users at ${currentTime.format()}'); 
+  const currentSessions = await database.ref('sessions').once('value');
+ 
+  for (let session of currentSessions) {
+    const currentData = session.val();
+    currentData.users.forEach((eachUser) => {
+      const userLastOnlineDate = eachUser.lastOnline;
+    });
+  }
+}
 
 module.exports = {
   createSession,

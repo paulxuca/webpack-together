@@ -16,7 +16,13 @@ const userMiddleware = (req, res, next) => {
   next();
 }
 
+const cleanUsers = () => {
+  
+};
+
+
 module.exports = {
   initUser,
   userMiddleware,
+  cleanUsers,
 };

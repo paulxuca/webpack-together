@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import styled from 'styled-components';
 import Modal from './Common/Modal';
-import { getMode } from '../utils/editor';
+import { getFiletype } from '../utils/editor';
 
 const ModalContainer = styled.div`
   padding: 30px;
@@ -75,14 +75,14 @@ export default class CreateFileModal extends Component {
   }
 
   isButtonDisabled() {
-    if (!this.state.fileName || !getMode(this.state.fileName) || !this.props.store.app.fileExists(this.state.fileName)) {
+    if (!this.state.fileName || !getFiletype(this.state.fileName) || !this.props.store.app.fileExists(this.state.fileName)) {
       return true;
     }
     return false;
   }
 
   isCheckboxDisabled = () => {
-    if (!this.state.fileName || ['jsx', 'text/typescript/, text/x-coffeescript'].indexOf(getMode(this.state.fileName)) === -1 ) {
+    if (!this.state.fileName || ['jsx', 'typescript', 'coffeescript'].indexOf(getFiletype(this.state.fileName)) === -1 ) {
       return true;
     }
     return false;

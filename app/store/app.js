@@ -1,5 +1,6 @@
 import { observable, action, toJS } from 'mobx';
 import difference from 'lodash/difference';
+import differenceBy from 'lodash/differenceBy';
 import {
   getSession,
   saveAllAndAttemptCompiler,
@@ -62,7 +63,8 @@ class App {
     
     this.userID = getUserID();
     this.sessionName = sessionName;
-    this.firebaseRef = getRefByName(this.sessionName);      
+    this.firebaseRef = getRefByName(this.sessionName);
+
     this.firebaseRef.on('value', this.sessionListener);
     this.firebaseRef.on('child_changed', this.childListener);
   }
@@ -128,22 +130,19 @@ class App {
   }
 
   @action updatePublicCursorPosition = (isRange, position) => {
-    this.firebaseRef.child(`users/${this.userID}`).set({
+    this.firebaseRef
+    .child(`users/${this.userID}`).update({
       isRange,
       position,
+      lastOnline: new Date(),
     });
   }
 
   @action changeLoaders = (newLoaders) => {
-    // if (newLoaders)
     if (difference(newLoaders, toJS(this.webpackConfig.loaders)).length > 0) {
       changeSessionLoaders(this.firebaseRef, newLoaders);
       this.saveFirebase(true);
     }
-  }
-
-  @action fileExists = (name) => {
-    return this.files.map((each) => each.name).indexOf(name) === -1;
   }
 
   @action displayToast = async (message, delayTime) => {
@@ -152,6 +151,10 @@ class App {
       await delay(delayTime);
       this.toastMessage = false;
     }
+  }
+
+  fileExists = (name) => {
+    return this.files.map((each) => each.name).indexOf(name) === -1;
   }
 }
 

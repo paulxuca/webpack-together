@@ -1,7 +1,11 @@
 import { MODE_MAP } from './constants';
 
+export const getFiletype = (fileName) => {
+  return MODE_MAP[fileName.split('.')[fileName.split('.').length - 1]];
+}
+
 export const getMode = (fileName, aceInstance) => require.ensure([], () => {
-  const mode = MODE_MAP[fileName.split('.')[fileName.split('.').length - 1]];
+  const mode = getFiletype(fileName);
   if (mode === MODE_MAP.js) {
     require('brace/mode/jsx');
   } else if (mode === MODE_MAP.html) {
@@ -21,4 +25,3 @@ export const getMode = (fileName, aceInstance) => require.ensure([], () => {
   }
   aceInstance && aceInstance.getSession().setMode(`ace/mode/${mode}`);
 });
-
