@@ -7,6 +7,7 @@ import React, { Component, PropTypes } from 'react';
 import styled from 'styled-components';
 import ace from 'brace';
 import { observer } from 'mobx-react';
+import isEqualObject from 'lodash/isEqual';
 import { getMode } from '../utils/editor';
 import {
   Editor,
@@ -28,6 +29,10 @@ const hasSelection = (start, end) => {
   }
   return false;
 }
+
+const isUsersEqual = (currentUsers, nextUsers) => {
+  return isEqualObject(currentUsers, nextUsers);
+};
 
 @observer
 export default class EditorComponent extends Component {
@@ -71,7 +76,7 @@ export default class EditorComponent extends Component {
     getMode(files[fileIndex].name, this.editor);      
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
+  componentWillReceiveProps(nextProps) {
     this.editor.getSession().off('change', this.handleEditorChange)
     const nextFile = nextProps.files[nextProps.fileIndex];    
     
@@ -88,6 +93,12 @@ export default class EditorComponent extends Component {
     if (nextProps.fileIndex !== this.props.fileIndex) {
       getMode(nextFile.name, this.editor);
       this.editor.clearSelection();
+    }
+
+    if (!isUsersEqual(this.props.publicUsers, nextProps.publicUsers)) {
+      Object.keys(nextProps.publicUsers).forEach(eachUser => {
+        
+      });
     }
     
     this.editor.getSession().on('change', this.handleEditorChange);
@@ -126,7 +137,6 @@ export default class EditorComponent extends Component {
   }
 
   render() {
-    console.log(this.props.publicUsers);
     return (
       <EditorComponentPane>
         {this.props.fileIsEntry ? <EditorEntryFilePrompt>
