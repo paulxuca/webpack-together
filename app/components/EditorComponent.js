@@ -15,20 +15,19 @@ import {
   EditorEntryFilePrompt
 } from './Editor';
 
-
 const initalState = {
   cursor: {
     column: 0,
     row: 0,
   }
-}
+};
 
 const hasSelection = (start, end) => {
   if (end.row !== start.row || end.column !== start.column) {
     return true;
   }
   return false;
-}
+};
 
 const isUsersEqual = (currentUsers, nextUsers) => {
   return isEqualObject(currentUsers, nextUsers);
@@ -66,7 +65,7 @@ export default class EditorComponent extends Component {
     this.editor.getSession().selection.on('changeCursor', this.handleCursorPositionChange);
 
     this.editor.clearSelection();
-    this.editor.commands.bindKey('Cmd-Z', null);
+    // this.editor.commands.bindKey('Cmd-Z', null);
 
     this.editor.setOptions({
       enableBasicAutocompletion: true,
@@ -95,11 +94,19 @@ export default class EditorComponent extends Component {
       this.editor.clearSelection();
     }
 
-    if (!isUsersEqual(this.props.publicUsers, nextProps.publicUsers)) {
-      Object.keys(nextProps.publicUsers).forEach(eachUser => {
-        
-      });
-    }
+    nextProps.publicUsers && Object.keys(nextProps.publicUsers)
+    .filter((e) => {
+      // return this.props.selfID !== e;
+      return true;
+    })
+    .forEach(eachUser => {
+      const user = nextProps.publicUsers[eachUser];
+      if (user.isRange) {
+
+      } else {
+
+      }
+    });
     
     this.editor.getSession().on('change', this.handleEditorChange);
   }
@@ -111,10 +118,10 @@ export default class EditorComponent extends Component {
   }
 
   handleMetaKeyPress = (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.keyCode === 90) {
-      e.preventDefault();
-      this.editor.getSession().getUndoManager().undo(true);
-    }
+    // if ((e.metaKey || e.ctrlKey) && e.keyCode === 90) {
+    //   e.preventDefault();
+    //   this.editor.getSession().getUndoManager().undo(true);
+    // }
   }
 
   handleEditorChange(e) {

@@ -12,6 +12,7 @@ const utils = require('./utils');
 const sandbox = require('./sandbox');
 const vendor = require('./vendor');
 const npm = require('./npm');
+const stats = require('./stats');
 const user = require('./user');
 
 const webpack = require('webpack');
@@ -37,6 +38,8 @@ if (!utils.isProduction()) {
   }));
   app.use(webpackHotMiddleware(compiler));
 }
+
+app.get('/stats', stats.displayStats);
 
 app.use(/\/api\/(sandbox|session)/, routes.sandboxMiddleware);
 app.use('/api/session', routes.intentMiddleware);

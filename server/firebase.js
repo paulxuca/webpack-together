@@ -1,7 +1,9 @@
 const firebase = require('firebase');
+const randomColor = require('randomcolor');
 const moment = require('moment');
 const uuid = require('uuid');
 const sessions = require('./sessions');
+const utils = require('./utils');
 const boilerplates = require('./boilerplates');
 const firebaseConfig = require('./config').firebase;
 const errors = require('./constants').errors;
@@ -27,20 +29,37 @@ const activeClean = async () => {
 }
 
 const addUser = (userID, sessionName) => {
-  // TOOD: Check if user is in another session first
-  if (users[userID]) {
-    delete users[userID];
+  if (users[sessionName] && users[sessionName][userID]) {
+    delete users[sessionName][userID];
     getSessionRef(sessionName).child(`users/${userID}`).remove(userID);
+  } else {
+    users[sessionName] = {};
   }
 
-  const userRef = getUserRef(userID);
-  users[userID] = {
-    userID,
-    sessionName,
+  const [currentColorsList, currentUsersList] = Object.keys(users[sessionName])
+  .reduce((allData, eachElement) => {
+    const currentUser = users[sessionName][eachElement];
+    return [[...allData[0], currentUser.userColor],[...allData[1], currentUser.userName]];
+  }, []);
+
+  const userName = utils.getDefaultUsername([].concat(currentUsersList));
+  const userColor = utils.getColor([].concat(currentColorsList));
+  const currentUserData = users[sessionName];
+  const newUserData = {
+    [userID]: {
+      userID,
+      userColor,
+      userName,
+    },
   };
 
+  users[sessionName] = Object.assign({}, currentUserData, newUserData);
+
+  const userRef = getUserRef(userID);
   getSessionRef(sessionName).child(`users/${userID}`).set({
     userID,
+    userColor,
+    userName,
   });
 }
 
@@ -162,6 +181,7 @@ module.exports = {
   setCompiling,
 
   addUser,
+  users,
 };
 
 

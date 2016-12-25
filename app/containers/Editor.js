@@ -8,6 +8,7 @@ import CreateFileModal from '../components/CreateFileModal';
 import SandboxSettingsModal from '../components/SandboxSettingsModal';
 import Toasty from '../components/Toasty';
 import NetworkStatus from '../components/NetworkStatus';
+import UsersDisplay from '../components/UsersDisplay';
 import { EditorMain, EditorWindow } from '../components/Editor';
 
 @inject('store') @observer
@@ -61,7 +62,9 @@ export default class Editor extends Component {
       currentFileIndex,
       entryFileName,
       writeToFirebase,
-      updatePublicCursorPosition
+      updatePublicCursorPosition,
+
+      userID
     } = this.props.store.app;
 
     const { 
@@ -90,6 +93,7 @@ export default class Editor extends Component {
             writeFirebase={writeToFirebase}
             isOnline={onlineStatus}
             publicUsers={users}
+            selfID={userID}
             changeCursorPosition={updatePublicCursorPosition}
           />
           <Preview
@@ -101,6 +105,9 @@ export default class Editor extends Component {
             previewExpanded={this.state.previewExpanded}
           /> 
         </EditorWindow>}
+        <UsersDisplay
+          users={users}
+        />
         <Toasty />
       </EditorMain>
     );

@@ -56,14 +56,16 @@ const initializeSessionBundles = () => {
 };
 
 const shouldInvalidateLoaders = (sessionName, webpackConfig) => {
-  if (_.difference(webpackConfig.loaders, sessions[sessionName].config.loaderConfig).length > 0) {
+  const currentLoaderConfig = sessions[sessionName].config.loaderConfig;
+  if (_.difference(webpackConfig.loaders, currentLoaderConfig).length || _.difference(currentLoaderConfig, webpackConfig.loaders).length) {
     return true;
   }
   return false;
 };
 
 const shouldInvalidatePackages = (sessionName, packageConfig) => {
-  if (_.difference(sessions[sessionName].config.packageConfig, packageConfig).length > 0) {
+  const currentPackageConfig = sessions[sessionName].config.packageConfig;
+  if (_.difference(currentPackageConfig, packageConfig).length || _.difference(packageConfig, currentPackageConfig).length) {
     return true;
   }
   return false;
@@ -107,6 +109,7 @@ module.exports = {
   getSession,
   updateSession,
   removeSession,
+  sessions,
 
   hasBundle,
   initializeSessionBundles,

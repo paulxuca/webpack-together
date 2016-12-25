@@ -54,7 +54,7 @@ class App {
     this.filesKey = [];
     this.canChangeIndex = true;
     this.saveFirebase = debounce(this.saveFirebase, 300);
-    this.updatePublicCursorPosition = debounce(this.updatePublicCursorPosition, 100);
+    this.updatePublicCursorPosition = debounce(this.updatePublicCursorPosition, 600);
   }
 
   @action getSession = async () => {

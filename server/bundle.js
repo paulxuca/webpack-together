@@ -44,6 +44,9 @@ const createWebpackConfig = (sessionName, packageList, webpackConfig, entryFile)
         module: {
           loaders: loaderConfig,
         },
+        performance: {
+          hints: false,
+        },
         plugins: [
           ...vendorPlugins,
         ],

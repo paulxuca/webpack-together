@@ -1,5 +1,6 @@
 import { observable, action } from 'mobx';
 import { getRequest } from '../utils/request';
+import app from './app';
 
 const config = require('../config');
 
@@ -26,7 +27,10 @@ class UI {
   @action closeFileModal = () => this.addFileModalOpen = false;
   @action openFileModal = () => this.addFileModalOpen = true;
   
-  @action setErrorMessage = message => this.errorMessage = message;
+  @action setErrorMessage = message => {
+    this.errorMessage = message;
+  }
+
   @action appendLogMessage = message => {
     this.logMessages.push(message);
     this.newLogs = true;

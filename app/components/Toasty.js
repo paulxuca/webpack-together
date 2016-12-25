@@ -3,13 +3,13 @@ import { inject, observer } from 'mobx-react';
 import styled, { keyframes } from 'styled-components';
 import { getEffect } from '../utils/style';
 
-const popIn = getEffect('transform: translatey(100px)', 'transform: translatey(0px)');
-const popOut = getEffect('transform: translatey(0px)', 'transform: translatey(100px)')
+const popIn = getEffect('transform: translatey(200px)', 'transform: translatey(0px)');
+const popOut = getEffect('transform: translatey(0px)', 'transform: translatey(200px)')
 
 const ToastElement = styled.div`
   position: fixed;
   bottom: 0px;
-  left: 0px;
+  right: 0px;
   z-index: 10;
   background-color: black;
   min-width: 200px;
@@ -26,7 +26,7 @@ const ToastElement = styled.div`
     animation: ${popIn} 0.5s ease-in-out;
   `:
   `
-    transform: translatey(100px);
+    transform: translatey(200px);
     animation: ${popOut} 0.5s ease-in-out;
   `}
   
