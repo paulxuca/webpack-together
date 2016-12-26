@@ -24,20 +24,17 @@ const getSession = (sessionName) => {
   return sessions[sessionName];
 };
 
-const updateSession = (
-  sessionName,
-  config,
-  loaderConfig,
-  packageConfig,
-) => {
+const updateSession = (sessionName, config, loaderConfig, packageConfig) => {
   return new Promise((resolve) => {
     sessions[sessionName].config.loaderConfig = loaderConfig;
     sessions[sessionName].config.packageConfig = packageConfig;
-    sessions[sessionName].compiler = webpack(config);
-
+    // sessions[sessionName].compiler = webpack(config);
+    sessions[sessionName].webpackMiddleware.compiler = webpack(config);
+    sessions[sessionName].compiler.options.module.loaders = config.module.loaders;
     // Invalidate the compiler, to allow recompiling
-    sessions[sessionName].webpackMiddleware.invalidate();
-    resolve();
+    sessions[sessionName].webpackMiddleware.invalidate(() => {
+      resolve();
+    });
   });
 };
 

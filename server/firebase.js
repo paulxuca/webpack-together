@@ -28,7 +28,7 @@ const activeClean = async () => {
   });
 }
 
-const addUser = (userID, sessionName) => {
+const addUser = (sessionName, userID) => {
   if (users[sessionName] && users[sessionName][userID]) {
     delete users[sessionName][userID];
     getSessionRef(sessionName).child(`users/${userID}`).remove(userID);
@@ -169,6 +169,10 @@ const cleanUsersFirebase = async () => {
   }
 }
 
+const hasUserInSession = (sessionName, userID) => {
+  return users[sessionName] && users[sessionName][userID];
+}
+
 module.exports = {
   createSession,
   saveAll,
@@ -182,6 +186,7 @@ module.exports = {
 
   addUser,
   users,
+  hasUserInSession,
 };
 
 

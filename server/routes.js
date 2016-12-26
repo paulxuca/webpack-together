@@ -11,6 +11,7 @@ const boilerplates = require('./boilerplates');
 const mergeSessionData = (sessionConfig, sessionName) => Object.assign({}, sessionConfig, { sessionName });
 const handleError = (error, res, sessionName) => {
   console.log(error.message);
+  console.log(error.stack);
   firebase.hasCompiled(sessionName);
   res.status(400).json(error);
 };

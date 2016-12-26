@@ -1,5 +1,6 @@
-const hash = require('string-hash');
 const webpack = require('webpack');
+const hash = require('string-hash');
+
 const fs = require('./filesystem');
 const npm = require('./npm');
 const path = require('path');
@@ -7,12 +8,11 @@ const config = require('./config');
 const utils = require('./utils');
 const errors = require('./constants').errors;
 const walk = require('./walk');
+const filesystem = require('./filesystem');
 
 const getPathForVendor = vendorHash => path.resolve(process.cwd(), 'vendor', vendorHash);
 const getPathForVendorFile = vendorHash => path.resolve(process.cwd(), 'vendor', vendorHash, `dll.vendor_${vendorHash}.js`);
 const vendorHashRegex = new RegExp(/vendor_(.+).js/);
-const vendorHashCache = {}; // In memory cache for vendor hashes
-
 
 const promiseWebpackRun = (config) => new Promise((resolve, reject) => {
   webpack(config).run(err => {
@@ -25,7 +25,8 @@ const promiseWebpackRun = (config) => new Promise((resolve, reject) => {
 
 const existsVendorBundle = (vendorHash) => {
   return fs.fs.existsSync(getPathForVendor(vendorHash));
-}
+};
+
 
 const createVendors = async (packageList) => {
   return new Promise((resolve, reject) => {
@@ -76,24 +77,11 @@ const createVendors = async (packageList) => {
 module.exports = {
   getPathForVendor,
   createVendors,
-  createVendorName: (packages) => {
-    if (!packages) return null;
-    const vendorListString = JSON.stringify(packages);
-    if (vendorHashCache[vendorListString]) {
-      return vendorHashCache[vendorListString];
-    }
-
-    const vendorHash = hash(JSON.stringify(packages.reduce((all, ea) => {
-      return all + ea;
-    }, ''))).toString();
-    vendorHashCache[vendorListString] = vendorHash;
-    return vendorHash;
-  },
   getVendorManifest:(vendorHash) => {
     try {
       return JSON.parse(fs.fs.readFileSync(path.join(getPathForVendor(vendorHash), 'manifest.json')).toString());
     } catch (err) {
-      console.log(err);
+      return err;
     }
   },
   initializeVendorFolder() {
@@ -104,8 +92,9 @@ module.exports = {
       fs.fs.outputJsonSync(path.resolve(process.cwd(), 'packages', 'PACKAGE_LIST.json'), {});
     }
   },
-  createVendor(vendorHash, packages) {
+  createVendor(packages) {
     return new Promise((resolve, reject) => {
+      const vendorHash = utils.createVendorName(packages);
       fs.fs.ensureDirSync(getPathForVendor(vendorHash));
 
       const vendorPkgs = packages.reduce((allPkgs, eachPkg) => {
@@ -137,8 +126,6 @@ module.exports = {
           }),
         ]
       };
-
-      console.log(`Creating vendor bundle with ${vendorPkgs.length} packages`);      
       const webpackVendorCompiler = webpack(vendorConfig);
       webpackVendorCompiler.run((err) => {
         if (err) {

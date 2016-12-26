@@ -1,8 +1,9 @@
 const path = require('path');
+const hash = require('string-hash');
 const fs = require('fs-extra');
 const walk = require('./walk');
-const hash = require('string-hash');
 const config = require('./config');
+const utils = require('./utils');
 const errors = require('./constants').errors;
 
 const getSessionFileFolderFromName = (sessionName) => path.resolve(process.cwd(), 'sessions', sessionName, 'files');
@@ -52,7 +53,7 @@ module.exports = {
       writeFile(fileNameFolder('index.html', sessionName), injectScriptTag(
         indexFileContents,
         sessionName,
-        packageList
+        packageList,
       ))
       .then(() => resolve())
       .catch((err) => reject(new Error(errors.SCRIPT_INJECT_ERROR)));

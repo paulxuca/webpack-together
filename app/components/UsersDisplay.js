@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 
 const getUserShortname = (userName) => {
+  if (!userName) return null;
   return userName.split('-').map(e => e.substring(0, 1)).join('');
 }
 
@@ -36,8 +37,8 @@ const UserElement = styled.li`
     font-weight: 400;
     font-size: 12px;
     position: relative;
-    left: 10px;
-    top: 10px;
+    left: 12px;
+    top: 12px;
     letter-spacing: 1px;
   }
 `;
@@ -50,7 +51,7 @@ class UsersDisplay extends Component {
       <UsersBar>
         <UsersList>
           {users && Object.keys(users).map(e => {
-            return (
+            return users[e].userColor && (
               <UserElement
                 color={users[e].userColor}
                 key={e}

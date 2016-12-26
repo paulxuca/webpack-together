@@ -139,7 +139,7 @@ class App {
   }
 
   @action changeLoaders = (newLoaders) => {
-    if (difference(newLoaders, toJS(this.webpackConfig.loaders)).length > 0) {
+    if (difference(newLoaders, toJS(this.webpackConfig.loaders)).length || difference(toJS(this.webpackConfig.loaders), newLoaders).length) {
       changeSessionLoaders(this.firebaseRef, newLoaders);
       this.saveFirebase(true);
     }

@@ -1,10 +1,12 @@
+const webpack = require('webpack');
+const hash = require('string-hash');
+
 const loaders = require('./loaders');
 const serverConfig = require('./config');
 const vendor = require('./vendor');
 const fs = require('./filesystem');
-const webpack = require('webpack');
-const hash = require('string-hash');
 const path = require('path');
+const utils = require('./utils');
 const sessions = require('./sessions');
 const errors = require('./constants').errors;
 const hasCompiledFnFirebase = require('./firebase').hasCompiled;
@@ -14,7 +16,7 @@ const getPublicPath = sessionName =>  path.join('/', 'api', 'sandbox', sessionNa
 
 const createWebpackConfig = (sessionName, packageList, webpackConfig, entryFile) => {
   return new Promise(async (resolve) => {
-    const loaderConfig = loaders.createLoaders(webpackConfig.loaders);
+    const loaderConfig = loaders.createLoaders(webpackConfig.loaders);    
 
     const vendorPlugins = packageList.map((each) => {
       const vendorManifest = vendor.getVendorManifest(String(hash(each)));
@@ -69,7 +71,6 @@ const updateBundle = (sessionName, packageList, webpackConfig, entryFile) => {
       )
       .then(() => resolve())
       .catch((addSessionError) => {
-        console.log('ERROR!');
         reject(new Error(errors.BUNDLE_ERROR));
       });
   });
