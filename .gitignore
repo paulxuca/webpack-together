@@ -6,3 +6,4 @@ packages/
 dist/
 .DS_Store
 .vscode
+yarn-error.log

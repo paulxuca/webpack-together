@@ -170,6 +170,7 @@ const cleanUsersFirebase = async () => {
 }
 
 const hasUserInSession = (sessionName, userID) => {
+  console.log(users);
   return users[sessionName] && users[sessionName][userID];
 }
 
