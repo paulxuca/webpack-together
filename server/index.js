@@ -52,6 +52,8 @@ app.get('/api/sandbox', sandbox.getIndex);
 app.get('/api/sandbox/tools.js', sandbox.getTools);
 app.get('/api/vendor/:vendorHash', vendor.getVendorFile);
 
+app.get('/join/:sessionName', routes.join);
+
 //Clear all existing bundles and what not
 sessions.initializeSessionBundles();
 vendor.initializeVendorFolder();

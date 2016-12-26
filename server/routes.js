@@ -80,6 +80,16 @@ const update = async (req, res) => {
   }
 };
 
+const join = (req, res) => {
+  const { sessionName } = req.params;
+  if (!sessions.hasBundle(sessionName)) {
+    res.redirect('/');
+  } else {
+    res.cookie('sessionName', sessionName, { expires: new Date(Date.now() + 3600000) });
+    res.redirect('/');
+  }
+};
+
 const loaderOptions = (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=3600000');
   res.status(200).json(boilerplates.getLoadersOptions());
@@ -90,5 +100,6 @@ module.exports = {
   intentMiddleware,
   sandboxMiddleware,
   loaderOptions,
+  join,
 };
 
