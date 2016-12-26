@@ -22,6 +22,11 @@ const initalState = {
   }
 };
 
+const Selection = ace.acequire('ace/selection').Selection;
+const Range = ace.acequire('ace/range').Range;
+
+const userPointers = {};
+
 const hasSelection = (start, end) => {
   if (end.row !== start.row || end.column !== start.column) {
     return true;
@@ -32,6 +37,11 @@ const hasSelection = (start, end) => {
 const isUsersEqual = (currentUsers, nextUsers) => {
   return isEqualObject(currentUsers, nextUsers);
 };
+
+const getRangeFromPosition = (position) => {
+  const { start, end } = position;
+  return new Range(start.row, start.column, end.row, end.column);
+}
 
 @observer
 export default class EditorComponent extends Component {
@@ -81,6 +91,7 @@ export default class EditorComponent extends Component {
     
     if (nextFile.content !== this.editor.getValue()) {
       this.editor.setValue(nextFile.content);
+      this.editor.clearSelection();
     }
     
     if (!nextProps.isOnline) {
@@ -101,8 +112,10 @@ export default class EditorComponent extends Component {
     })
     .forEach(eachUser => {
       const user = nextProps.publicUsers[eachUser];
+    
       if (user.isRange) {
-
+        this.editor.getSession().addMarker(getRangeFromPosition(user.position), 'ace_active-line', 'line', false);
+        // userPointers[user.userID].addRange(getRangeFromPosition(user.position));
       } else {
 
       }

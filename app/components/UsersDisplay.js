@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 const getUserShortname = (userName) => {
   if (!userName) return null;
-  return userName.split('-').map(e => e.substring(0, 1)).join('');
+  return userName.split('-').map(e => e.substring(0, 1)).join('').substring(0, 2);
 }
 
 const UsersBar = styled.div`
