@@ -75,6 +75,7 @@
   "babel": {
     "plugins": [
       "transform-async-to-generator"
-    ]
+    ],
+    "presets": ["stage-0", "es2015"]
   }
 }

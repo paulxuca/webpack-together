@@ -8,12 +8,12 @@ const initUser = (sessionName) => {
 };
 
 const userMiddleware = (req, res, next) => {
-  const { sessionName } = req.cookies;
-  if (!req.cookies.userID) {
+  const { sessionName, userID } = req.cookies;
+  if (!userID) {
     const userID = initUser(sessionName);
     res.cookie('userID', userID, { expires: new Date(Date.now() + 36000000) });
-  } else if (!firebase.hasUserInSession(sessionName, req.cookies.userID)) {
-    firebase.addUser(sessionName, req.cookies.userID);
+  } else if (!firebase.hasUserInSession(sessionName, userID)) {
+    firebase.addUser(sessionName, userID);
   }
   next();
 }

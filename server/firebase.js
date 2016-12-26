@@ -2,6 +2,8 @@ const firebase = require('firebase');
 const randomColor = require('randomcolor');
 const moment = require('moment');
 const uuid = require('uuid');
+const _ = require('lodash');
+
 const sessions = require('./sessions');
 const utils = require('./utils');
 const boilerplates = require('./boilerplates');
@@ -13,7 +15,7 @@ firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 const getSessionRef = sessionName => database.ref(`sessions/${sessionName}`);
-const getUserRef = userID => database.ref(`users/${userID}`);
+const getUserRef = (sessionName) => database.ref(`sessions/${sessionName}/users`);
 
 const activeClean = async () => {
   const currentTime = new moment();
@@ -23,16 +25,31 @@ const activeClean = async () => {
   currentSessions.forEach((child) => {
     const sessionLastEditedDate = child.val().lastEdited;
     if (moment.duration(currentTime.diff(sessionLastEditedDate)).asMinutes() > 60) {
-      sessions.remove(child.key);
+      sessions.sessions.remove(child.key);
     }
   });
 }
 
+const isUserInOtherSession = (userID) => {
+  const userSessionKeys = Object.keys(users);
+  for (let iter = 0; iter < userSessionKeys.length; iter++) {
+    if (Object.keys(users[userSessionKeys[iter]]).indexOf(userID)) {
+      return {
+        sessionName: userSessionKeys[iter],
+      }
+    }
+  }
+  return false;
+};
+
 const addUser = (sessionName, userID) => {
-  if (users[sessionName] && users[sessionName][userID]) {
-    delete users[sessionName][userID];
-    getSessionRef(sessionName).child(`users/${userID}`).remove(userID);
-  } else {
+  const hasUser = isUserInOtherSession(userID);
+  if (hasUser) {
+    delete users[hasUser.sessionName][userID];
+    getSessionRef(hasUser.sessionName).child(`users/${userID}`).remove();
+  }
+
+  if (!users[sessionName]) {
     users[sessionName] = {};
   }
 
@@ -40,22 +57,19 @@ const addUser = (sessionName, userID) => {
   .reduce((allData, eachElement) => {
     const currentUser = users[sessionName][eachElement];
     return [[...allData[0], currentUser.userColor],[...allData[1], currentUser.userName]];
-  }, []);
+  }, [[],[]]);
 
-  const userName = utils.getDefaultUsername([].concat(currentUsersList));
-  const userColor = utils.getColor([].concat(currentColorsList));
-  const newUserData = {
+  const userName = utils.getDefaultUsername([...currentUsersList]);
+  const userColor = utils.getColor([...currentColorsList]);
+
+  users[sessionName] = _.merge(users[sessionName], {
     [userID]: {
       userID,
       userColor,
       userName,
     },
-    ...users[sessionName],
-  };
+  });
 
-  users[sessionName] = newUserData;
-
-  const userRef = getUserRef(userID);
   getSessionRef(sessionName).child(`users/${userID}`).set({
     userID,
     userColor,
@@ -172,7 +186,8 @@ const cleanUsersFirebase = async () => {
 const hasUserInSession = (sessionName, userID) => {
   console.log(users);
   return users[sessionName] && users[sessionName][userID];
-}
+};
+
 
 module.exports = {
   createSession,
