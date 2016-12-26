@@ -41,7 +41,7 @@
     "npmi": "^2.0.1",
     "randomcolor": "^0.4.4",
     "react": "^15.4.1",
-    "react-addons-perf": "15.3.2",
+    "react-addons-perf": "^15.4.1",
     "react-decoration": "^1.4.1",
     "react-dom": "^15.4.1",
     "react-hot-loader": "3.0.0-beta.6",

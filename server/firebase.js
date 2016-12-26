@@ -44,16 +44,16 @@ const addUser = (sessionName, userID) => {
 
   const userName = utils.getDefaultUsername([].concat(currentUsersList));
   const userColor = utils.getColor([].concat(currentColorsList));
-  const currentUserData = users[sessionName];
   const newUserData = {
     [userID]: {
       userID,
       userColor,
       userName,
     },
+    ...users[sessionName],
   };
 
-  users[sessionName] = Object.assign({}, currentUserData, newUserData);
+  users[sessionName] = newUserData;
 
   const userRef = getUserRef(userID);
   getSessionRef(sessionName).child(`users/${userID}`).set({
